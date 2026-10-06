@@ -1,0 +1,227 @@
+---
+---
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="CS-426 Parallel & Distributed Computing course material portal for Air University Aerospace & Aviation Campus, Kamra.">
+  <meta name="theme-color" content="#0b1f3a">
+  <title>CS-426 — Parallel & Distributed Computing</title>
+  <link rel="stylesheet" href="assets/css/style.css?v=1">
+</head>
+<body>
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+
+  <header class="site-header" id="top">
+    <div class="shell header-inner">
+      <div class="brand-mark" aria-hidden="true">AU</div>
+      <div class="header-copy">
+        <p class="eyebrow">Department of Computer Science</p>
+        <h1 id="course-title">CS-426 — Parallel &amp; Distributed Computing</h1>
+        <p class="portal-line" id="portal-line">Course Material Portal</p>
+        <div class="instructor-block" aria-label="Instructor information">
+          <strong id="instructor-name">Dr. Zakir Khan</strong>
+          <span id="instructor-role">Assistant Professor, Department of Computer Science</span>
+          <span id="instructor-campus">Air University Aerospace &amp; Aviation Campus, Kamra</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <nav class="site-nav" aria-label="Course navigation">
+    <div class="shell nav-inner">
+      <a href="#course-sheet">Course Sheet</a>
+      <a href="#clos">CLOs</a>
+      <a href="#assessment">Assessment</a>
+      <a href="#weekly-plan">Weekly Plan</a>
+      <a href="#material-viewer">Material Viewer</a>
+    </div>
+  </nav>
+
+  <main id="main-content">
+    <section class="section" id="course-sheet" aria-labelledby="course-sheet-heading">
+      <div class="shell">
+        <div class="section-heading">
+          <div>
+            <p class="section-kicker">Course Sheet</p>
+            <h2 id="course-sheet-heading">Course Overview</h2>
+          </div>
+          <span class="source-badge">Theory Course</span>
+        </div>
+
+        <p class="course-description" id="course-description">Loading course description…</p>
+        <div class="overview-grid" id="course-overview" aria-live="polite"></div>
+
+        <div class="split-panel">
+          <article class="panel">
+            <h3>Course Delivery Framework</h3>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Phase</th>
+                    <th>Weeks</th>
+                    <th>Core Focus</th>
+                    <th>Learning Progression</th>
+                  </tr>
+                </thead>
+                <tbody id="delivery-framework"></tbody>
+              </table>
+            </div>
+          </article>
+
+          <article class="panel references-panel">
+            <h3>Textbooks &amp; Reference Material</h3>
+            <div id="reference-material"></div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section-alt" id="clos" aria-labelledby="clos-heading">
+      <div class="shell">
+        <div class="section-heading">
+          <div>
+            <p class="section-kicker">Learning Outcomes</p>
+            <h2 id="clos-heading">Course Learning Outcomes</h2>
+          </div>
+        </div>
+        <div class="table-wrap panel table-panel">
+          <table class="clo-table">
+            <thead>
+              <tr>
+                <th>CLO</th>
+                <th>Course Learning Outcome</th>
+                <th>Domain</th>
+                <th>Taxonomy</th>
+                <th>GA/PLO</th>
+              </tr>
+            </thead>
+            <tbody id="clo-table-body"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="assessment" aria-labelledby="assessment-heading">
+      <div class="shell">
+        <div class="section-heading">
+          <div>
+            <p class="section-kicker">Assessment</p>
+            <h2 id="assessment-heading">Assessment &amp; Grading</h2>
+          </div>
+        </div>
+
+        <div class="assessment-cards" id="assessment-cards"></div>
+
+        <article class="panel assessment-calendar-panel">
+          <div class="panel-heading-row">
+            <h3>Assessment Calendar</h3>
+            <p id="assessment-protection" class="small-note"></p>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Item</th>
+                  <th>Planned Session</th>
+                  <th>Coverage / Focus</th>
+                  <th>Release</th>
+                  <th>Due / Conduct</th>
+                  <th>Weight</th>
+                </tr>
+              </thead>
+              <tbody id="assessment-calendar"></tbody>
+            </table>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section class="section section-alt" id="weekly-plan" aria-labelledby="weekly-plan-heading">
+      <div class="shell">
+        <div class="section-heading weekly-heading">
+          <div>
+            <p class="section-kicker">15 Teaching Weeks · 30 Sessions</p>
+            <h2 id="weekly-plan-heading">Weekly Teaching Plan</h2>
+          </div>
+          <div class="search-box">
+            <label for="week-search">Search weekly plan</label>
+            <div class="search-input-wrap">
+              <span aria-hidden="true">⌕</span>
+              <input id="week-search" type="search" autocomplete="off" placeholder="Week, topic, CLO, assessment, material…">
+              <button type="button" id="clear-search" class="clear-search" aria-label="Clear search">Clear</button>
+            </div>
+            <p class="search-status" id="search-status" aria-live="polite"></p>
+          </div>
+        </div>
+
+        <div class="week-grid" id="week-grid" aria-live="polite"></div>
+      </div>
+    </section>
+
+    <section class="section viewer-section" id="material-viewer" aria-labelledby="viewer-heading">
+      <div class="shell">
+        <div class="section-heading">
+          <div>
+            <p class="section-kicker">Embedded Viewer</p>
+            <h2 id="viewer-heading">Material Viewer</h2>
+          </div>
+          <a id="viewer-open-link" class="button button-outline is-hidden" href="#" target="_blank" rel="noopener">Open in new tab</a>
+        </div>
+
+        <div class="viewer-meta panel" id="viewer-meta">
+          <div>
+            <span class="meta-label">Week</span>
+            <strong id="viewer-week">—</strong>
+          </div>
+          <div>
+            <span class="meta-label">Material</span>
+            <strong id="viewer-name">Select a learning material from a weekly card.</strong>
+          </div>
+          <div>
+            <span class="meta-label">Path</span>
+            <code id="viewer-path">—</code>
+          </div>
+        </div>
+
+        <div class="viewer-frame-wrap panel" id="viewer-frame-wrap">
+          <div class="viewer-placeholder" id="viewer-placeholder">
+            <strong>No material selected</strong>
+            <span>Use a View button under any week to load the HTML material here.</span>
+          </div>
+          <iframe id="material-frame" title="Course learning material viewer" loading="lazy"></iframe>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="shell footer-inner">
+      <div>
+        <strong id="footer-course">CS-426 · Parallel &amp; Distributed Computing</strong>
+        <span>Air University Aerospace &amp; Aviation Campus, Kamra</span>
+      </div>
+      <a href="#top">Back to top</a>
+    </div>
+  </footer>
+
+  <noscript>
+    <div class="noscript-notice">This course portal requires JavaScript to load the course plan and learning materials.</div>
+  </noscript>
+
+  <script id="jekyll-materials" type="application/json">
+  {
+    "builtByJekyll": true,
+    "files": [
+      {% assign material_files = site.static_files | where: "extname", ".html" | where_exp: "file", "file.path contains '/materials/'" %}
+      {% for file in material_files %}
+      {"name": {{ file.name | jsonify }}, "path": {{ file.path | jsonify }}}{% unless forloop.last %},{% endunless %}
+      {% endfor %}
+    ]
+  }
+  </script>
+  <script src="assets/js/app.js?v=1"></script>
+</body>
+</html>

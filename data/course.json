@@ -1,0 +1,672 @@
+{
+  "course": {
+    "title": "Parallel & Distributed Computing",
+    "code": "CS-426",
+    "type": "Theory",
+    "program": null,
+    "semester": null,
+    "academicYear": null,
+    "prerequisite": "Operating Systems",
+    "teachingMode": "Theory",
+    "weeks": 15,
+    "sessionsPerWeek": 2,
+    "totalSessions": 30,
+    "midSemesterExam": "After completion of Week 8",
+    "finalExam": "After completion of Week 15",
+    "tools": [
+      "OpenMP",
+      "MPI",
+      "CUDA",
+      "OpenCL"
+    ],
+    "programmingLanguage": null,
+    "instructor": {
+      "name": "Dr. Zakir Khan",
+      "designation": "Assistant Professor",
+      "department": "Department of Computer Science",
+      "campus": "Air University Aerospace & Aviation Campus, Kamra"
+    },
+    "sourceNotes": {
+      "program": "Not specified in the uploaded course guide.",
+      "semester": "The Semester / Academic Session field is blank in the uploaded course guide.",
+      "academicYear": "The Semester / Academic Session field is blank in the uploaded course guide.",
+      "programmingLanguage": "No specific programming language is named in the uploaded theory course guide."
+    }
+  },
+  "description": "This course provides comprehensive coverage of parallel and distributed computing. It studies architectures and models, programming paradigms, algorithms, and scientific and other applications. Students develop a foundation for designing and implementing efficient solutions using parallel and distributed systems. Coverage includes parallel and distributed computer architectures, multithreaded programming, synchronous and asynchronous computation and communication, concurrency control, memory hierarchy and consistency, shared-memory and message-passing models, MPI, MIMD/SIMD architectures, parallel algorithms, GPU architecture and programming, parallel I/O, fault-tolerance concepts, performance analysis, distributed architectures, naming, peer-to-peer systems, distributed file systems, content delivery, and big data.",
+  "clos": [
+    {
+      "clo": "CLO-1",
+      "description": "Understand the fundamental concepts in parallel and distributed computing and describe distributed-system architecture, parallel/distributed programming paradigms, and parallel algorithms.",
+      "domain": "Cognitive",
+      "ga": "GA 2",
+      "plo": null,
+      "taxonomy": "C2 / Understand"
+    },
+    {
+      "clo": "CLO-2",
+      "description": "Analyze architectures, memory models, and communication mechanisms of parallel and distributed systems to assess their impact on algorithm design, performance, and scalability of concurrent applications.",
+      "domain": "Cognitive",
+      "ga": "GA 3",
+      "plo": null,
+      "taxonomy": "C4 / Analyze"
+    },
+    {
+      "clo": "CLO-3",
+      "description": "Develop parallel and distributed algorithms for solving computationally intensive problems.",
+      "domain": "Cognitive",
+      "ga": "GA 4",
+      "plo": null,
+      "taxonomy": "C3 / Apply"
+    }
+  ],
+  "deliveryFramework": [
+    {
+      "phase": "I. Foundations",
+      "weeks": "1-4",
+      "coreFocus": "Parallelism, threads, IPC, memory hierarchy, cache, architectures and models",
+      "learningProgression": "Build the hardware and concurrency foundation before algorithm design."
+    },
+    {
+      "phase": "II. Parallel Design",
+      "weeks": "5-8",
+      "coreFocus": "PCAM, PRAM, parallel algorithms, performance, OpenMP and MPI",
+      "learningProgression": "Move from decomposition to implementation models and performance reasoning."
+    },
+    {
+      "phase": "MID-SEMESTER EXAM",
+      "weeks": "After W8",
+      "coreFocus": "Sessions 1-16",
+      "learningProgression": "Assessment is separated from assignment and quiz deadlines."
+    },
+    {
+      "phase": "III. Distributed Systems",
+      "weeks": "9-12",
+      "coreFocus": "GPU/CUDA/OpenCL, distributed architectures, naming, DNS, P2P and edge systems",
+      "learningProgression": "Transition from parallel platforms to distributed architecture and services."
+    },
+    {
+      "phase": "IV. Distributed Data",
+      "weeks": "13-15",
+      "coreFocus": "Distributed file systems, CDN/DASH, big data and course integration",
+      "learningProgression": "Connect storage, delivery and data-intensive computing into an end-to-end view."
+    }
+  ],
+  "assessments": {
+    "components": [
+      {
+        "component": "Quizzes (4)",
+        "weight": "15%",
+        "management": "4 quizzes × 3.75% each"
+      },
+      {
+        "component": "Assignments (4)",
+        "weight": "15%",
+        "management": "4 assignments × 3.75% each"
+      },
+      {
+        "component": "Mid-Semester Examination",
+        "weight": "25%",
+        "management": "After Week 8"
+      },
+      {
+        "component": "Final Examination",
+        "weight": "45%",
+        "management": "After Week 15"
+      }
+    ],
+    "calendar": [
+      {
+        "item": "Q1",
+        "plannedSession": "W3-S6",
+        "coverage": "Foundations, processes/threads, IPC, memory hierarchy and cache",
+        "release": "—",
+        "dueConduct": "W3-S6",
+        "weight": "3.75%"
+      },
+      {
+        "item": "A1",
+        "plannedSession": "W4-S8",
+        "coverage": "Parallel architecture/model selection; fork-join/parallel max; PCAM design reasoning",
+        "release": "W4-S8",
+        "dueConduct": "W5-S10",
+        "weight": "3.75%"
+      },
+      {
+        "item": "Q2",
+        "plannedSession": "W6-S12",
+        "coverage": "Architectures/models, PCAM, PRAM, reduction, scan and parallel sorting",
+        "release": "—",
+        "dueConduct": "W6-S12",
+        "weight": "3.75%"
+      },
+      {
+        "item": "A2",
+        "plannedSession": "W6-S11",
+        "coverage": "Parallel algorithm analysis, speedup, scalability and Amdahl's Law",
+        "release": "W6-S11",
+        "dueConduct": "W7-S14",
+        "weight": "3.75%"
+      },
+      {
+        "item": "MID",
+        "plannedSession": "After W8",
+        "coverage": "Sessions 1-16",
+        "release": "—",
+        "dueConduct": "After W8",
+        "weight": "25%"
+      },
+      {
+        "item": "A3",
+        "plannedSession": "W10-S20",
+        "coverage": "Distributed architecture design; client-server, multi-tier, naming and P2P reasoning",
+        "release": "W10-S20",
+        "dueConduct": "W12-S24",
+        "weight": "3.75%"
+      },
+      {
+        "item": "Q3",
+        "plannedSession": "W11-S22",
+        "coverage": "GPU/CUDA/OpenCL, distributed-system fundamentals, architecture and DNS",
+        "release": "—",
+        "dueConduct": "W11-S22",
+        "weight": "3.75%"
+      },
+      {
+        "item": "A4",
+        "plannedSession": "W13-S25",
+        "coverage": "Distributed file systems and CDN/DASH case analysis",
+        "release": "W13-S25",
+        "dueConduct": "W14-S28",
+        "weight": "3.75%"
+      },
+      {
+        "item": "Q4",
+        "plannedSession": "W13-S26",
+        "coverage": "P2P/hybrid architectures and distributed file systems",
+        "release": "—",
+        "dueConduct": "W13-S26",
+        "weight": "3.75%"
+      },
+      {
+        "item": "FINAL",
+        "plannedSession": "After W15",
+        "coverage": "Complete theory course; comprehensive final assessment",
+        "release": "—",
+        "dueConduct": "After W15",
+        "weight": "45%"
+      }
+    ],
+    "protectionNote": "Assessment protection around examinations: No quiz and no assignment deadline is scheduled in Week 8 before the Mid-Semester Examination. No quiz and no assignment deadline is scheduled in Week 15 before the Final Examination.",
+    "assignmentBriefs": [
+      {
+        "title": "Assignment 1 - Parallel Design and Fork-Join Reasoning",
+        "description": "Analyze a compute-intensive problem such as parallel maximum finding. Identify the parallel architecture/programming model and develop a PCAM-based decomposition. Explain how fork-join execution can be used. Keep the submission individual and concise."
+      },
+      {
+        "title": "Assignment 2 - Parallel Algorithm Performance Analysis",
+        "description": "Analyze a parallel reduction, scan, or sorting problem. Compare serial and parallel behavior. Calculate and interpret speedup, efficiency or scalability measures. Apply Amdahl's Law to discuss the practical performance limit."
+      },
+      {
+        "title": "Assignment 3 - Distributed Architecture Case",
+        "description": "Given a distributed application scenario, compare centralized, two-tier, three-tier/multi-tier and decentralized/P2P options. Propose an architecture and justify the role of naming, communication and edge/super-peer components where relevant."
+      },
+      {
+        "title": "Assignment 4 - Distributed Storage and Content Delivery Case",
+        "description": "Compare the operation and design considerations of NFS, CFS and GFS in a data-distribution scenario. Extend the analysis to CDN/server selection and DASH where appropriate. Emphasize design trade-offs rather than memorized definitions."
+      }
+    ]
+  },
+  "references": {
+    "primaryTextbooks": [
+      "B. Schmidt, J. Gonzalez-Dominguez, C. Hundt, and M. Schlarb, Parallel Programming: Concepts and Practice, 1st ed., Morgan Kaufmann, 2018.",
+      "G. Coulouris, J. Dollimore, T. Kindberg, and G. Blair, Distributed Systems: Concepts and Design, 5th ed."
+    ],
+    "referenceBooks": [
+      "P. Pacheco, An Introduction to Parallel Programming, 2nd ed.",
+      "R. Trobec, B. Slivnik, P. Bulić, and B. Robič, Introduction to Parallel Computing: From Algorithms to Programming on State-of-the-Art Platforms, 2018.",
+      "A. S. Tanenbaum and M. van Steen, Distributed Systems: Principles and Paradigms, 2nd ed., Prentice Hall, 2007.",
+      "K. Hwang, J. Dongarra, and G. C. Fox, Distributed and Cloud Computing: Clusters, Grids, Clouds, and the Future Internet, 1st ed., Elsevier."
+    ]
+  },
+  "weeklyPlan": [
+    {
+      "week": 1,
+      "title": "Introduction to Parallel & Distributed Computing & Forms of Parallelism and the Multi-Core Paradigm Shift",
+      "sessions": [
+        {
+          "session": 1,
+          "title": "Introduction to Parallel & Distributed Computing",
+          "coverage": "Course orientation; motivation; serial vs. parallel computing; parallel vs. distributed computing; concurrency vs. parallelism; scientific and data-intensive applications.",
+          "learningFocus": "Establish the vocabulary and motivation for the course.",
+          "clo": [
+            "CLO-1"
+          ],
+          "assessment": ""
+        },
+        {
+          "session": 2,
+          "title": "Forms of Parallelism and the Multi-Core Paradigm Shift",
+          "coverage": "Data parallelism; task parallelism; shared vs. distributed computing; multi-core and multiprocessor systems; limits of serial performance; modern parallel platforms.",
+          "learningFocus": "Relate problem structure to modern processor and system organization.",
+          "clo": [
+            "CLO-1"
+          ],
+          "assessment": ""
+        }
+      ],
+      "clo": "CLO-1",
+      "assessment": "—"
+    },
+    {
+      "week": 2,
+      "title": "Processes and Threads & IPC and Concurrent Execution",
+      "sessions": [
+        {
+          "session": 3,
+          "title": "Processes and Threads",
+          "coverage": "Process concept; thread concept; process vs. thread; single-threaded and multithreaded execution; thread lifecycle; foreground/background threads; thread pools.",
+          "learningFocus": "Connect operating-system execution units to parallel programming.",
+          "clo": [
+            "CLO-1"
+          ],
+          "assessment": ""
+        },
+        {
+          "session": 4,
+          "title": "IPC and Concurrent Execution",
+          "coverage": "Inter-process communication; shared-memory communication; message-based communication; synchronous/asynchronous operations; coordination and concurrency-control issues.",
+          "learningFocus": "Explain how concurrent execution units exchange data and coordinate.",
+          "clo": [
+            "CLO-1",
+            "CLO-2"
+          ],
+          "assessment": ""
+        }
+      ],
+      "clo": "CLO-1, CLO-2",
+      "assessment": "—"
+    },
+    {
+      "week": 3,
+      "title": "Memory Hierarchy and Principle of Locality & Cache Organization, Mapping and Coherence",
+      "sessions": [
+        {
+          "session": 5,
+          "title": "Memory Hierarchy and Principle of Locality",
+          "coverage": "CPU-memory performance gap; registers; cache; main memory; secondary storage; temporal locality; spatial locality; locality effects in parallel programs.",
+          "learningFocus": "Explain why memory behavior affects parallel performance.",
+          "clo": [
+            "CLO-2"
+          ],
+          "assessment": ""
+        },
+        {
+          "session": 6,
+          "title": "Cache Organization, Mapping and Coherence",
+          "coverage": "Cache levels; cache design; cache mapping; hits/misses; cache coherence in multicore systems; introduction to memory-consistency concepts.",
+          "learningFocus": "Analyze cache behavior and multicore memory issues.",
+          "clo": [
+            "CLO-2"
+          ],
+          "assessment": "Quiz 1"
+        }
+      ],
+      "clo": "CLO-2",
+      "assessment": "Quiz 1"
+    },
+    {
+      "week": 4,
+      "title": "Parallel Architectures and Flynn's Taxonomy & Parallel Programming Models",
+      "sessions": [
+        {
+          "session": 7,
+          "title": "Parallel Architectures and Flynn's Taxonomy",
+          "coverage": "Instruction-level parallelism; processor-level parallelism; Flynn's taxonomy; SISD, SIMD, MISD and MIMD; architectural examples.",
+          "learningFocus": "Classify parallel computers using architectural characteristics.",
+          "clo": [
+            "CLO-1",
+            "CLO-2"
+          ],
+          "assessment": ""
+        },
+        {
+          "session": 8,
+          "title": "Parallel Programming Models",
+          "coverage": "Shared-memory model; message-passing model; data-parallel model; task-parallel model; relationship between architecture and programming model; model selection.",
+          "learningFocus": "Choose a programming model that matches hardware and problem structure.",
+          "clo": [
+            "CLO-1",
+            "CLO-2"
+          ],
+          "assessment": "Assignment 1 released"
+        }
+      ],
+      "clo": "CLO-1, CLO-2",
+      "assessment": "Assignment 1 released"
+    },
+    {
+      "week": 5,
+      "title": "Parallel Program Design I - PCAM and Decomposition & Parallel Program Design II - Communication, Agglomeration and Mapping",
+      "sessions": [
+        {
+          "session": 9,
+          "title": "Parallel Program Design I - PCAM and Decomposition",
+          "coverage": "Systematic parallel design; Ian Foster PCAM methodology; partitioning; domain decomposition; functional decomposition; dependencies; granularity.",
+          "learningFocus": "Transform a serial problem into candidate parallel tasks.",
+          "clo": [
+            "CLO-2",
+            "CLO-3"
+          ],
+          "assessment": ""
+        },
+        {
+          "session": 10,
+          "title": "Parallel Program Design II - Communication, Agglomeration and Mapping",
+          "coverage": "PCAM communication stage; local/global communication; agglomeration; task grouping; mapping tasks to processors; fine- vs. coarse-grained design; worked case.",
+          "learningFocus": "Complete the PCAM design cycle and justify design decisions.",
+          "clo": [
+            "CLO-2",
+            "CLO-3"
+          ],
+          "assessment": "Assignment 1 due"
+        }
+      ],
+      "clo": "CLO-2, CLO-3",
+      "assessment": "Assignment 1 due"
+    },
+    {
+      "week": 6,
+      "title": "Parallel Algorithms and the PRAM Model & Parallel Sorting Algorithms",
+      "sessions": [
+        {
+          "session": 11,
+          "title": "Parallel Algorithms and the PRAM Model",
+          "coverage": "Parallel algorithm properties; PRAM assumptions; processors and shared memory; reduction algorithm; scan/prefix operations; basic cost reasoning.",
+          "learningFocus": "Use abstract parallel models to reason about algorithm structure.",
+          "clo": [
+            "CLO-3"
+          ],
+          "assessment": "Assignment 2 released"
+        },
+        {
+          "session": 12,
+          "title": "Parallel Sorting Algorithms",
+          "coverage": "Sorting in parallel; serial vs. parallel merge sort; parallel quicksort concepts; decomposition; communication; work distribution; comparison of approaches.",
+          "learningFocus": "Analyze how sorting can be decomposed and executed in parallel.",
+          "clo": [
+            "CLO-3"
+          ],
+          "assessment": "Quiz 2"
+        }
+      ],
+      "clo": "CLO-3",
+      "assessment": "Assignment 2 released; Quiz 2"
+    },
+    {
+      "week": 7,
+      "title": "Performance of Parallel Algorithms & Amdahl's Law and Shared-Memory Parallelism",
+      "sessions": [
+        {
+          "session": 13,
+          "title": "Performance of Parallel Algorithms",
+          "coverage": "Execution time; serial vs. parallel performance; speedup; efficiency; scalability; overhead; synchronization cost; communication cost; load balancing.",
+          "learningFocus": "Measure and interpret parallel-program performance.",
+          "clo": [
+            "CLO-2"
+          ],
+          "assessment": ""
+        },
+        {
+          "session": 14,
+          "title": "Amdahl's Law and Shared-Memory Parallelism",
+          "coverage": "Amdahl's Law; serial fraction; maximum speedup; numerical interpretation; symmetric multiprocessors; fork-join model; OpenMP concepts and parallel regions.",
+          "learningFocus": "Estimate performance limits and connect them to shared-memory execution.",
+          "clo": [
+            "CLO-2",
+            "CLO-3"
+          ],
+          "assessment": "Assignment 2 due"
+        }
+      ],
+      "clo": "CLO-2, CLO-3",
+      "assessment": "Assignment 2 due"
+    },
+    {
+      "week": 8,
+      "title": "Open MPI / MPI Fundamentals & MPI Communication and Parallel I/O Overview",
+      "sessions": [
+        {
+          "session": 15,
+          "title": "Open MPI / MPI Fundamentals",
+          "coverage": "Distributed-memory programming; MPI model; processes; rank; size; communicators; basic program structure; initialization and termination; message-passing perspective.",
+          "learningFocus": "Explain the organization of an MPI program and its execution model.",
+          "clo": [
+            "CLO-1",
+            "CLO-2"
+          ],
+          "assessment": "No assessment"
+        },
+        {
+          "session": 16,
+          "title": "MPI Communication and Parallel I/O Overview",
+          "coverage": "Point-to-point communication; blocking and non-blocking communication; collective operations; broadcast; scatter; gather; reduction; parallel I/O overview; pre-mid integration.",
+          "learningFocus": "Compare communication modes and select suitable MPI operations.",
+          "clo": [
+            "CLO-2",
+            "CLO-3"
+          ],
+          "assessment": "No assessment"
+        }
+      ],
+      "clo": "CLO-1, CLO-2, CLO-3",
+      "assessment": "No assessment"
+    },
+    {
+      "week": 9,
+      "title": "GPU and GPGPU Architecture & CUDA and OpenCL",
+      "sessions": [
+        {
+          "session": 17,
+          "title": "GPU and GPGPU Architecture",
+          "coverage": "CPU vs. GPU; GPU architecture; throughput-oriented execution; GPGPU; heterogeneous CPU-GPU systems; GPU memory considerations.",
+          "learningFocus": "Relate GPU architecture to massively parallel workloads.",
+          "clo": [
+            "CLO-1",
+            "CLO-2"
+          ],
+          "assessment": ""
+        },
+        {
+          "session": 18,
+          "title": "CUDA and OpenCL",
+          "coverage": "CUDA programming model; host/device relationship; GPU execution concepts; introduction to OpenCL; CUDA vs. OpenCL; heterogeneous programming and suitable workloads.",
+          "learningFocus": "Explain the role of GPU programming frameworks in heterogeneous computing.",
+          "clo": [
+            "CLO-2"
+          ],
+          "assessment": ""
+        }
+      ],
+      "clo": "CLO-1, CLO-2",
+      "assessment": "—"
+    },
+    {
+      "week": 10,
+      "title": "Introduction to Distributed Systems & Centralized and Client-Server Architectures",
+      "sessions": [
+        {
+          "session": 19,
+          "title": "Introduction to Distributed Systems",
+          "coverage": "Distributed-system definition and characteristics; resource sharing; openness; transparency; scalability; concurrency; heterogeneity; failure and fault-tolerance concepts.",
+          "learningFocus": "Identify the design goals and core challenges of distributed systems.",
+          "clo": [
+            "CLO-1",
+            "CLO-2"
+          ],
+          "assessment": ""
+        },
+        {
+          "session": 20,
+          "title": "Centralized and Client-Server Architectures",
+          "coverage": "Distributed-system architecture; centralized architecture; client-server model; two-tier, three-tier and multi-tier architecture; components, benefits and limitations.",
+          "learningFocus": "Compare centralized and multi-tier distributed architectures.",
+          "clo": [
+            "CLO-1",
+            "CLO-2"
+          ],
+          "assessment": "Assignment 3 released"
+        }
+      ],
+      "clo": "CLO-1, CLO-2",
+      "assessment": "Assignment 3 released"
+    },
+    {
+      "week": 11,
+      "title": "Naming Services and DNS Fundamentals & DNS Operation, Caching and Security Issues",
+      "sessions": [
+        {
+          "session": 21,
+          "title": "Naming Services and DNS Fundamentals",
+          "coverage": "Names, identifiers and addresses; naming services; DNS architecture and hierarchy; domains; name servers; stubs; resolvers; recursive and iterative queries.",
+          "learningFocus": "Explain how distributed systems locate named resources.",
+          "clo": [
+            "CLO-1",
+            "CLO-2"
+          ],
+          "assessment": ""
+        },
+        {
+          "session": 22,
+          "title": "DNS Operation, Caching and Security Issues",
+          "coverage": "DNS query resolution; caching; benefits and consistency considerations; attacking DNS; security concerns; naming-service case discussion.",
+          "learningFocus": "Analyze DNS behavior, performance and common security concerns.",
+          "clo": [
+            "CLO-2"
+          ],
+          "assessment": "Quiz 3"
+        }
+      ],
+      "clo": "CLO-1, CLO-2",
+      "assessment": "Quiz 3"
+    },
+    {
+      "week": 12,
+      "title": "Decentralized and Peer-to-Peer Architectures & Hybrid, Super-Peer, Edge and Collaborative Systems",
+      "sessions": [
+        {
+          "session": 23,
+          "title": "Decentralized and Peer-to-Peer Architectures",
+          "coverage": "Decentralized architecture; P2P systems; overlay networks; structured and unstructured P2P systems; resource discovery; architectural comparison.",
+          "learningFocus": "Differentiate decentralized approaches and overlay structures.",
+          "clo": [
+            "CLO-1",
+            "CLO-2"
+          ],
+          "assessment": ""
+        },
+        {
+          "session": 24,
+          "title": "Hybrid, Super-Peer, Edge and Collaborative Systems",
+          "coverage": "Hybrid architecture; super-peer networks; edge server systems; collaborative distributed systems; centralized vs. decentralized vs. hybrid comparison; case study.",
+          "learningFocus": "Select a distributed architecture for an application scenario.",
+          "clo": [
+            "CLO-2"
+          ],
+          "assessment": "Assignment 3 due"
+        }
+      ],
+      "clo": "CLO-1, CLO-2",
+      "assessment": "Assignment 3 due"
+    },
+    {
+      "week": 13,
+      "title": "Distributed File Systems I - Concepts and Sun NFS & Distributed File Systems II - CFS and GFS",
+      "sessions": [
+        {
+          "session": 25,
+          "title": "Distributed File Systems I - Concepts and Sun NFS",
+          "coverage": "Need for distributed storage; objectives; naming; sharing; transparency; consistency; replication; Sun NFS architecture; NFS access mechanism.",
+          "learningFocus": "Explain the role and basic operation of a distributed file system.",
+          "clo": [
+            "CLO-1",
+            "CLO-2"
+          ],
+          "assessment": "Assignment 4 released"
+        },
+        {
+          "session": 26,
+          "title": "Distributed File Systems II - CFS and GFS",
+          "coverage": "CFS access and mechanism; GFS architecture and access mechanism; large distributed storage; data placement; replication; fault-tolerance concepts; system comparison.",
+          "learningFocus": "Compare distributed file-system approaches and design trade-offs.",
+          "clo": [
+            "CLO-2"
+          ],
+          "assessment": "Quiz 4"
+        }
+      ],
+      "clo": "CLO-1, CLO-2",
+      "assessment": "Assignment 4 released; Quiz 4"
+    },
+    {
+      "week": 14,
+      "title": "Content Delivery Networks & DASH and CDN Case Study",
+      "sessions": [
+        {
+          "session": 27,
+          "title": "Content Delivery Networks",
+          "coverage": "Need for CDN; origin servers; edge servers; replicas; content distribution; caching; geographic distribution; server selection; relationship to distributed systems.",
+          "learningFocus": "Explain how CDNs reduce latency and distribute content at scale.",
+          "clo": [
+            "CLO-1",
+            "CLO-2"
+          ],
+          "assessment": ""
+        },
+        {
+          "session": 28,
+          "title": "DASH and CDN Case Study",
+          "coverage": "DASH protocol; adaptive delivery; content-delivery workflow; server-selection considerations; CDN case study; interaction of storage, network and edge infrastructure.",
+          "learningFocus": "Trace an end-to-end distributed content-delivery workflow.",
+          "clo": [
+            "CLO-2"
+          ],
+          "assessment": "Assignment 4 due"
+        }
+      ],
+      "clo": "CLO-1, CLO-2",
+      "assessment": "Assignment 4 due"
+    },
+    {
+      "week": 15,
+      "title": "Big Data and Distributed Computing & Course Integration and Final Review",
+      "sessions": [
+        {
+          "session": 29,
+          "title": "Big Data and Distributed Computing",
+          "coverage": "Big Data concept; sources; real-world examples; characteristics; challenges; why Big Data is needed; role of distributed processing and storage.",
+          "learningFocus": "Relate data-scale challenges to parallel and distributed computing.",
+          "clo": [
+            "CLO-1",
+            "CLO-2"
+          ],
+          "assessment": "No assessment"
+        },
+        {
+          "session": 30,
+          "title": "Course Integration and Final Review",
+          "coverage": "Choosing shared memory, MPI or GPU; architecture selection; algorithm design; communication and memory effects; speedup/scalability; naming; storage; content delivery; integrated case review.",
+          "learningFocus": "Integrate the complete course and prepare for final assessment.",
+          "clo": [
+            "CLO-1",
+            "CLO-2",
+            "CLO-3"
+          ],
+          "assessment": "No assessment"
+        }
+      ],
+      "clo": "CLO-1, CLO-2, CLO-3",
+      "assessment": "No assessment"
+    }
+  ]
+}
