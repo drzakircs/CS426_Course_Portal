@@ -1,0 +1,1063 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CS-426 · Week 10 · Distributed Systems Interactive Lecture</title>
+<style>
+:root{
+  --stage:#041c2d; --paper:#f7fbfe; --ink:#0f2a3f; --muted:#4a6275; --line:#c9dce8;
+  --blue:#0b6fa4; --blue-soft:#e3f1fa; --green:#15803d; --green-soft:#e4f6ea;
+  --amber:#b45309; --amber-soft:#fdf1dc; --purple:#6d28d9; --purple-soft:#efe9fd;
+  --red:#b91c1c; --red-soft:#fde8e8; --teal:#0f766e; --teal-soft:#dff5f2;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;background:var(--stage);font-family:"Segoe UI",Arial,sans-serif;color:var(--ink);overflow:hidden}
+.stage{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;
+  background:radial-gradient(ellipse at 30% 20%,#0b3a5a 0%,var(--stage) 60%)}
+.deck{width:1280px;height:720px;position:relative;transform-origin:center center;flex:none}
+.slide{position:absolute;inset:0;background:var(--paper);border-radius:14px;box-shadow:0 20px 60px rgba(0,0,0,.45);
+  border-top:6px solid var(--blue);display:none;flex-direction:column;overflow:hidden}
+.slide.active{display:flex;animation:fade .35s ease}
+@keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.shead{display:flex;align-items:center;gap:16px;padding:16px 40px 0;font-size:12px;font-weight:700;letter-spacing:.08em;color:var(--blue);text-transform:uppercase}
+.shead .rule{flex:1;height:1px;background:var(--line)}
+.sbody{flex:1;padding:8px 40px 6px;display:flex;flex-direction:column;gap:12px;min-height:0}
+.sfoot{display:flex;align-items:center;justify-content:space-between;padding:8px 40px 12px;font-size:12px;color:var(--muted);font-weight:600}
+.sfoot .count{font-size:18px;color:var(--ink);font-weight:800}
+.sfoot .stepinfo{font-size:13px;font-weight:700;color:var(--blue);background:var(--blue-soft);border-radius:999px;padding:4px 12px}
+.sfoot .stepinfo.done{color:var(--green);background:var(--green-soft)}
+h1{font-size:52px;line-height:1.08;font-weight:800;color:var(--ink)}
+h2.t{font-size:32px;font-weight:800;line-height:1.15}
+h3{font-size:19px;font-weight:800}
+p,li{font-size:19px;line-height:1.42}
+.muted{color:var(--muted)}
+.hl{color:var(--blue)}
+.kicker{font-size:15px;font-weight:800;letter-spacing:.1em;color:var(--blue);text-transform:uppercase}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.card{background:#fff;border:1.5px solid var(--line);border-radius:12px;padding:12px 16px}
+.card h3{margin-bottom:5px}
+.card p,.card li{font-size:17px}
+.c-blue{background:var(--blue-soft);border-color:#9cc9e4}.c-blue h3{color:var(--blue)}
+.c-green{background:var(--green-soft);border-color:#9fd5b0}.c-green h3{color:var(--green)}
+.c-amber{background:var(--amber-soft);border-color:#ecc58a}.c-amber h3{color:var(--amber)}
+.c-purple{background:var(--purple-soft);border-color:#c5b2f3}.c-purple h3{color:var(--purple)}
+.c-red{background:var(--red-soft);border-color:#efaaaa}.c-red h3{color:var(--red)}
+.c-teal{background:var(--teal-soft);border-color:#93d5cd}.c-teal h3{color:var(--teal)}
+.callout{border-left:6px solid var(--green);background:var(--green-soft);border-radius:10px;padding:10px 18px;font-size:18px;font-weight:600}
+.callout.blue{border-color:var(--blue);background:var(--blue-soft)}
+.callout.amber{border-color:var(--amber);background:var(--amber-soft)}
+.simple{margin-top:auto;background:#fff8e1;border:1.5px solid #f0d48a;border-radius:12px;padding:10px 16px;font-size:17.5px;line-height:1.4;color:#3b2f05}
+.simple b:first-child{color:#8a5a00}
+.tryit{display:inline-block;background:var(--purple);color:#fff;font-weight:800;font-size:13px;letter-spacing:.06em;border-radius:6px;padding:2px 8px;margin-right:8px;vertical-align:2px}
+ul.clean{list-style:none}ul.clean li{padding-left:26px;position:relative;margin:3px 0}
+ul.clean li::before{content:"▸";position:absolute;left:4px;color:var(--blue);font-weight:800}
+.pill{display:inline-block;padding:6px 14px;border-radius:999px;background:var(--blue-soft);border:1.5px solid #9cc9e4;color:var(--blue);font-weight:700;font-size:15px;margin:3px 4px 3px 0}
+button{font-family:inherit;cursor:pointer}
+.btn{background:var(--blue);color:#fff;border:none;border-radius:10px;padding:9px 18px;font-size:17px;font-weight:700}
+.btn:hover{filter:brightness(1.1)}
+.btn.ghost{background:#fff;color:var(--blue);border:1.5px solid var(--blue)}
+.btn.red{background:var(--red)}
+/* step-by-step */
+.step{opacity:0;transform:translateY(12px);transition:opacity .4s ease,transform .4s ease;pointer-events:none}
+.step.shown{opacity:1;transform:none;pointer-events:auto}
+tr.step{transform:none}
+/* click-to-reveal */
+.reveal{cursor:pointer;transition:transform .15s,box-shadow .15s}
+.reveal:hover{transform:translateY(-2px);box-shadow:0 6px 16px rgba(11,111,164,.15)}
+.reveal .hide{display:none;margin-top:6px;padding-top:6px;border-top:1px dashed var(--line);font-size:17px}
+.reveal.open .hide{display:block;animation:fade .3s}
+.reveal .tap{font-size:13px;color:var(--purple);font-weight:700;margin-top:4px}
+.reveal .tap::before{content:"👆 "}
+.reveal.open .tap{display:none}
+/* quiz */
+.q{background:#fff;border:1.5px solid var(--line);border-radius:12px;padding:10px 16px}
+.q .qt{font-size:18px;font-weight:700;margin-bottom:7px}
+.q .opts{display:flex;flex-wrap:wrap;gap:8px}
+.q .opts button{background:#fff;border:1.5px solid var(--line);border-radius:9px;padding:6px 14px;font-size:16px;font-weight:600;color:var(--ink)}
+.q .opts button:hover{border-color:var(--blue)}
+.q .opts button.right{background:var(--green-soft);border-color:var(--green);color:var(--green)}
+.q .opts button.wrong{background:var(--red-soft);border-color:var(--red);color:var(--red)}
+.q .fb{font-size:16px;margin-top:6px;font-weight:600}
+.q .fb:empty{display:none}
+/* tabs */
+.tablist{display:flex;flex-wrap:wrap;gap:8px}
+.tablist button{border:1.5px solid var(--line);background:#fff;border-radius:999px;padding:7px 15px;font-size:16px;font-weight:700;color:var(--ink)}
+.tablist button.on{background:var(--blue);color:#fff;border-color:var(--blue)}
+.tablist button.seen:not(.on){border-color:var(--green);color:var(--green)}
+.panel{display:none}.panel.on{display:block;animation:fade .3s}
+/* table */
+table.tbl{width:100%;border-collapse:separate;border-spacing:0;font-size:17px;background:#fff;border:1.5px solid var(--line);border-radius:12px;overflow:hidden}
+.tbl th{background:var(--blue);color:#fff;text-align:left;padding:8px 12px;font-size:16px}
+.tbl td{padding:7px 12px;border-top:1px solid var(--line);vertical-align:top}
+.tbl tr td:first-child{font-weight:700;color:var(--blue);white-space:nowrap}
+.tbl tr.hot td{background:var(--amber-soft)}
+/* nodes & arrows */
+.node{background:#fff;border:2px solid var(--blue);border-radius:12px;padding:9px 12px;text-align:center;font-weight:700;font-size:16px;transition:all .3s;color:var(--ink)}
+.node small{display:block;font-weight:500;color:var(--muted);font-size:13px}
+.node.down{border-color:var(--red);background:var(--red-soft);color:var(--red)}
+.node.dim{opacity:.4}
+.node.glow{box-shadow:0 0 0 4px rgba(11,111,164,.25);background:var(--blue-soft)}
+.arrow{display:flex;align-items:center;justify-content:center;color:var(--blue);font-size:26px;font-weight:800}
+.meter{height:22px;background:#e6eef4;border-radius:999px;overflow:hidden;border:1px solid var(--line)}
+.meter>div{height:100%;width:0;background:var(--green);transition:width .4s,background .4s}
+.log{background:#0f2a3f;color:#d7ecf7;font-family:Consolas,monospace;font-size:15px;border-radius:10px;padding:10px 14px;line-height:1.55;min-height:170px}
+.log .ok{color:#86efac}.log .bad{color:#fca5a5}.log .warn{color:#fcd34d}
+/* title */
+.title-wrap{display:grid;grid-template-columns:1.1fr 1fr;gap:30px;align-items:center;flex:1}
+.netsvg{width:100%;height:auto;background:linear-gradient(160deg,#06304d,#041c2d);border-radius:16px}
+.howto{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}
+.howto span{background:#fff;border:1.5px solid var(--line);border-radius:10px;padding:6px 12px;font-size:15px;font-weight:600}
+.howto kbd{background:var(--blue);color:#fff;border-radius:5px;padding:1px 7px;font-family:inherit;font-weight:800;margin-right:4px}
+/* divider */
+.divider{background:linear-gradient(135deg,#0b6fa4,#063a5c);color:#fff;border-top-color:#38bdf8}
+.divider .shead{color:#bfe3f7}.divider .shead .rule{background:rgba(255,255,255,.3)}
+.divider .sfoot{color:#bfe3f7}.divider .sfoot .count{color:#fff}
+.divider h1{color:#fff}
+/* nav */
+.nav{position:fixed;right:18px;bottom:14px;display:flex;gap:8px;z-index:20}
+.nav button{width:42px;height:42px;border-radius:50%;border:1px solid rgba(255,255,255,.25);background:rgba(255,255,255,.1);color:#fff;font-size:17px;font-weight:700}
+.nav button:hover{background:rgba(255,255,255,.25)}
+.nav button#bNext{width:auto;padding:0 18px;border-radius:999px;background:#0b6fa4;border-color:#38bdf8;font-size:15px}
+.progress{position:fixed;left:0;bottom:0;height:4px;background:#38bdf8;z-index:20;transition:width .3s}
+.overview{position:fixed;inset:0;background:rgba(4,28,45,.97);z-index:40;display:none;overflow:auto;padding:30px}
+.overview.on{display:block}
+.overview h2{color:#fff;font-size:22px;margin-bottom:16px}
+.ovgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px}
+.ovgrid button{text-align:left;background:#0b3049;border:1px solid #1d5578;color:#e2f2fb;border-radius:10px;padding:12px;font-size:14px;line-height:1.35}
+.ovgrid button:hover,.ovgrid button.cur{background:#0b6fa4}
+.ovgrid button span{display:block;font-size:11px;color:#8ec7e6;font-weight:700;margin-bottom:4px}
+.help{position:fixed;left:18px;bottom:16px;color:rgba(255,255,255,.55);font-size:12px;z-index:20}
+@media (max-width:700px){.help{display:none}.nav button{width:36px;height:36px}}
+</style>
+</head>
+<body>
+<div class="stage"><div class="deck" id="deck">
+
+<!-- 1 TITLE -->
+<section class="slide" data-s="19" data-tag="Welcome" data-nostep>
+ <div class="shead">CS-426 · Week 10 · Parallel &amp; Distributed Computing<span class="rule"></span>Interactive lecture</div>
+ <div class="sbody">
+  <div class="title-wrap">
+   <div>
+    <div class="kicker">Week 10 · Sessions 19 &amp; 20</div>
+    <h1 style="margin:14px 0">Many computers,<br><span class="hl">one system</span></h1>
+    <p class="muted" style="font-size:22px">Introduction to Distributed Systems · Centralized and Client-Server Architectures</p>
+    <div style="margin-top:14px"><span class="pill">Design goals</span><span class="pill">Transparency</span><span class="pill">Client-server</span><span class="pill">2-tier · 3-tier · n-tier</span></div>
+    <div class="howto">
+     <span><kbd>→</kbd> next step</span><span><kbd>←</kbd> go back</span><span>👆 click cards to explore</span><span><kbd>O</kbd> all slides</span>
+    </div>
+   </div>
+   <svg class="netsvg" viewBox="0 0 520 360" aria-label="Network of computers">
+    <g stroke="#2b86b8" stroke-width="2" opacity=".8">
+     <line x1="260" y1="180" x2="90" y2="80"/><line x1="260" y1="180" x2="430" y2="80"/>
+     <line x1="260" y1="180" x2="90" y2="290"/><line x1="260" y1="180" x2="430" y2="290"/>
+     <line x1="90" y1="80" x2="430" y2="80"/><line x1="90" y1="290" x2="430" y2="290"/>
+     <line x1="90" y1="80" x2="90" y2="290"/><line x1="430" y1="80" x2="430" y2="290"/>
+    </g>
+    <g fill="#38bdf8">
+     <circle r="5"><animateMotion dur="2.4s" repeatCount="indefinite" path="M260,180 L90,80"/></circle>
+     <circle r="5"><animateMotion dur="2.1s" repeatCount="indefinite" path="M430,290 L260,180"/></circle>
+     <circle r="5"><animateMotion dur="3s" repeatCount="indefinite" path="M90,80 L430,80"/></circle>
+     <circle r="5"><animateMotion dur="2.7s" repeatCount="indefinite" path="M90,290 L260,180"/></circle>
+     <circle r="5"><animateMotion dur="3.3s" repeatCount="indefinite" path="M430,80 L430,290"/></circle>
+    </g>
+    <g font-family="Segoe UI" font-size="13" font-weight="700" text-anchor="middle" fill="#e2f2fb">
+     <rect x="215" y="150" width="90" height="60" rx="12" fill="#0b6fa4" stroke="#7dd3fc" stroke-width="2"/><text x="260" y="186">Service</text>
+     <rect x="50" y="55" width="80" height="50" rx="10" fill="#0a2f4a" stroke="#38bdf8"/><text x="90" y="85">Lahore</text>
+     <rect x="390" y="55" width="80" height="50" rx="10" fill="#0a2f4a" stroke="#38bdf8"/><text x="430" y="85">Karachi</text>
+     <rect x="50" y="265" width="80" height="50" rx="10" fill="#0a2f4a" stroke="#38bdf8"/><text x="90" y="295">Kamra</text>
+     <rect x="390" y="265" width="80" height="50" rx="10" fill="#0a2f4a" stroke="#38bdf8"/><text x="430" y="295">Cloud</text>
+    </g>
+   </svg>
+  </div>
+ </div>
+</section>
+
+<!-- 2 BRIDGE -->
+<section class="slide" data-s="19" data-tag="Where we are">
+ <div class="shead">CS-426 · Week 10 · Session 19<span class="rule"></span><span data-tag></span></div>
+ <div class="sbody">
+  <h2 class="t">Step 1: Where are we in the course?</h2>
+  <div class="grid4">
+   <div class="card c-blue"><h3>Weeks 1–4</h3><p>Threads, memory, cache, architectures</p></div>
+   <div class="card c-blue"><h3>Weeks 5–8</h3><p>PCAM, PRAM, speedup, OpenMP, <b>MPI</b></p></div>
+   <div class="card c-blue"><h3>Week 9</h3><p>GPU: thousands of cores in <b>one box</b></p></div>
+   <div class="card c-amber" style="border-width:3px"><h3>Week 10 onward</h3><p>Many <b>separate computers</b> joined by a network</p></div>
+  </div>
+  <div class="grid2">
+   <div class="card"><h3>Until now: parallel computing</h3><ul class="clean"><li>Goal: finish <b>one big job faster</b></li><li>Processors close together</li><li>Often share memory</li></ul></div>
+   <div class="card"><h3>From today: distributed computing</h3><ul class="clean"><li>Goal: <b>share resources and services</b></li><li>Computers can be far apart</li><li>They talk only by <b>messages</b></li></ul></div>
+  </div>
+  <div class="simple"><b>💡 In simple words:</b> Before, we used many processors to work <b>faster</b>. Now we use many computers in different places to work <b>together</b> as one service. You already saw message passing in MPI (Week 08).</div>
+ </div>
+</section>
+
+<!-- 3 ROUTE -->
+<section class="slide" data-s="19" data-tag="Learning route">
+ <div class="shead">CS-426 · Week 10 · Session 19<span class="rule"></span><span data-tag></span></div>
+ <div class="sbody">
+  <h2 class="t">Today's learning route</h2>
+  <div class="grid2">
+   <div class="card c-blue"><h3>Part 1 · What is a distributed system?</h3>
+    <ul class="clean"><li>Definition and everyday examples</li><li>Three key properties</li><li>Seven design goals</li></ul></div>
+   <div class="card c-green"><h3>Part 2 · How do we organize one?</h3>
+    <ul class="clean"><li>Centralized architecture</li><li>Client-server model</li><li>Two-tier, three-tier, multi-tier</li></ul></div>
+  </div>
+  <div class="grid3">
+   <div class="card"><h3>🎯 CLO-1</h3><p>Describe distributed-system architecture</p></div>
+   <div class="card"><h3>🎯 CLO-2</h3><p>Analyze architectures and their effects</p></div>
+   <div class="card c-amber"><h3>📝 Assignment 3</h3><p>Released this week · due W12-S24</p></div>
+  </div>
+  <div class="simple"><b>💡 How to use these slides:</b> Press <b>→</b> to show the next point. When you see a <span class="tryit">TRY IT</span> tag or a 👆 card, click it to explore. Each slide ends with a yellow box that sums it up in simple words.</div>
+ </div>
+</section>
+
+<!-- 4 WARM-UP -->
+<section class="slide" data-s="19" data-tag="Warm-up">
+ <div class="shead">CS-426 · Week 10 · Session 19<span class="rule"></span><span data-tag></span></div>
+ <div class="sbody">
+  <h2 class="t">Warm-up: is it distributed or not?</h2>
+  <p><span class="tryit">TRY IT</span>Guess first, then click the card to check.</p>
+  <div class="grid3">
+   <div class="card reveal"><h3>💬 WhatsApp</h3><div class="tap">Click to check</div><div class="hide"><b style="color:var(--green)">YES.</b> Phones and servers worldwide exchange messages.</div></div>
+   <div class="card reveal"><h3>🧮 Calculator app</h3><div class="tap">Click to check</div><div class="hide"><b style="color:var(--red)">NO.</b> It runs fully on one device. No network.</div></div>
+   <div class="card reveal"><h3>🔍 Google Search</h3><div class="tap">Click to check</div><div class="hide"><b style="color:var(--green)">YES.</b> Thousands of machines answer one search.</div></div>
+   <div class="card reveal"><h3>🏧 Bank ATM network</h3><div class="tap">Click to check</div><div class="hide"><b style="color:var(--green)">YES.</b> ATMs, branches and the bank's servers work together.</div></div>
+   <div class="card reveal"><h3>📝 Offline Notepad</h3><div class="tap">Click to check</div><div class="hide"><b style="color:var(--red)">NO.</b> One program on one computer.</div></div>
+   <div class="card reveal"><h3>🎓 University LMS</h3><div class="tap">Click to check</div><div class="hide"><b style="color:var(--green)">YES.</b> Your browser, a web server and a database server.</div></div>
+  </div>
+  <div class="simple"><b>💡 Simple test:</b> If <b>many computers</b> talk over a <b>network</b> to give you <b>one service</b>, it is a distributed system.</div>
+ </div>
+</section>
+
+<!-- 5 DEFINITION -->
+<section class="slide" data-s="19" data-tag="Definition">
+ <div class="shead">CS-426 · Week 10 · Session 19<span class="rule"></span><span data-tag></span></div>
+ <div class="sbody">
+  <h2 class="t">What is a distributed system?</h2>
+  <div class="grid2">
+   <div class="card c-blue"><h3>Tanenbaum &amp; van Steen</h3><p style="font-size:20px">"A collection of <b>independent computers</b> that appears to its users as a <b>single coherent system</b>."</p></div>
+   <div class="card c-purple"><h3>Coulouris et al.</h3><p style="font-size:20px">Parts on networked computers <b>communicate and coordinate</b> their actions <b>only by passing messages</b>.</p></div>
+  </div>
+  <p><span class="tryit">TRY IT</span>Click each key word to see what it means.</p>
+  <div class="grid3">
+   <div class="card reveal c-teal"><h3>1 · Independent</h3><div class="tap">Click</div><div class="hide">Each computer has its own CPU, memory and clock. It can work, or fail, on its own.</div></div>
+   <div class="card reveal c-teal"><h3>2 · Messages</h3><div class="tap">Click</div><div class="hide">No shared memory. Computers cooperate only by sending and receiving messages.</div></div>
+   <div class="card reveal c-teal"><h3>3 · One system</h3><div class="tap">Click</div><div class="hide">The user does not see many machines. It feels like one service.</div></div>
+  </div>
+  <div class="simple"><b>💡 In simple words:</b> Many separate computers send messages to each other, and to you they look like <b>one</b> system.</div>
+ </div>
+</section>
+
+<!-- 6 PARALLEL VS DISTRIBUTED -->
+<section class="slide" data-s="19" data-tag="Comparison">
+ <div class="shead">CS-426 · Week 10 · Session 19<span class="rule"></span><span data-tag></span></div>
+ <div class="sbody">
+  <h2 class="t">Parallel vs distributed: what is different?</h2>
+  <table class="tbl">
+   <tr><th style="width:18%">Aspect</th><th>Parallel computing</th><th>Distributed computing</th></tr>
+   <tr class="step"><td>Main goal</td><td>Make one job faster</td><td>Share resources and services</td></tr>
+   <tr class="step"><td>Memory</td><td>Often shared</td><td>Each computer has its own</td></tr>
+   <tr class="step"><td>Communication</td><td>Shared variables, fast bus</td><td>Messages over a network</td></tr>
+   <tr class="step"><td>Clock</td><td>One common clock</td><td>No global clock</td></tr>
+   <tr class="step hot"><td>Failure</td><td>Whole machine fails together</td><td><b>Partial failure</b>: one part fails, others keep working</td></tr>
+   <tr class="step"><td>Examples</td><td>OpenMP on multicore, CUDA on GPU</td><td>Web, online banking, cloud, DNS</td></tr>
+  </table>
+  <div class="simple"><b>💡 In simple words:</b> Parallel = <b>speed</b> inside one system. Distributed = <b>sharing</b> across many systems. An MPI cluster is a bit of both.</div>
+ </div>
+</section>
+
+<!-- 7 ANALOGY -->
+<section class="slide" data-s="19" data-tag="Analogy">
+ <div class="shead">CS-426 · Week 10 · Session 19<span class="rule"></span><span data-tag></span></div>
+ <div class="sbody">
+  <h2 class="t">Think of a bank with many branches</h2>
+  <div class="grid2" style="align-items:center">
+   <div style="display:grid;grid-template-columns:1fr auto 1fr;gap:10px;align-items:center">
+    <div class="node">🏦 Branch<small>Lahore</small></div><div class="arrow">⇄</div><div class="node">🏦 Branch<small>Islamabad</small></div>
+    <div></div><div class="arrow">⇅</div><div></div>
+    <div class="node">🏦 Branch<small>Kamra</small></div><div class="arrow">⇄</div><div class="node">🏦 Head office<small>Karachi</small></div>
+   </div>
+   <table class="tbl">
+    <tr><th>In the bank</th><th>In a distributed system</th></tr>
+    <tr class="step"><td>A branch</td><td>A node (computer)</td></tr>
+    <tr class="step"><td>Phone / courier</td><td>A message on the network</td></tr>
+    <tr class="step"><td>You see "one bank"</td><td>Transparency</td></tr>
+    <tr class="step"><td>One branch closed</td><td>Partial failure</td></tr>
+    <tr class="step"><td>Each wall clock differs</td><td>No global clock</td></tr>
+   </table>
+  </div>
+  <div class="simple"><b>💡 In simple words:</b> You deal with "the bank", not with each branch. The branches work together by sending messages. That is exactly how a distributed system feels to its users.</div>
+ </div>
+</section>
+
+<!-- 8 CONSEQUENCES -->
+<section class="slide" data-s="19" data-tag="Key properties">
+ <div class="shead">CS-426 · Week 10 · Session 19<span class="rule"></span><span data-tag></span></div>
+ <div class="sbody">
+  <h2 class="t">Three key properties of every distributed system</h2>
+  <div class="grid3">
+   <div class="card c-blue"><h3>1 · Concurrency</h3><p>Many users and programs run at the same time and share things.</p><p class="muted" style="font-size:15px;margin-top:4px">e.g. 500 students submit on the LMS at 11:59 pm</p></div>
+   <div class="card c-purple"><h3>2 · No global clock</h3><p>Each computer keeps its own time, and the clocks slowly drift apart.</p><p class="muted" style="font-size:15px;margin-top:4px">So: who clicked first? Hard to say.</p></div>
+   <div class="card c-red"><h3>3 · Independent failures</h3><p>One part can crash while the others keep running.</p><p class="muted" style="font-size:15px;margin-top:4px">Others may not even know it crashed.</p></div>
+  </div>
+  <div class="card">
+   <h3><span class="tryit">WATCH</span>Three nodes, three clocks (live)</h3>
+   <div class="grid3" style="margin-top:6px">
+    <div class="node">Node A<small id="clkA" style="font-size:24px;color:var(--ink)">--</small></div>
+    <div class="node">Node B<small id="clkB" style="font-size:24px;color:var(--ink)">--</small></div>
+    <div class="node">Node C<small id="clkC" style="font-size:24px;color:var(--ink)">--</small></div>
+   </div>
+   <p class="muted" style="font-size:15px;margin-top:6px">Node B is 0.8 s fast, Node C is 1.3 s slow. Which one shows the "real" time?</p>
+  </div>
+  <div class="simple"><b>💡 In simple words:</b> Many things happen <b>at once</b>, nobody has the <b>exact same time</b>, and <b>one part can break</b> without the others. These three facts make distributed systems hard.</div>
+ </div>
+</section>
+
+<!-- 9 GOALS -->
+<section class="slide" data-s="19" data-tag="Design goals">
+ <div class="shead">CS-426 · Week 10 · Session 19<span class="rule"></span><span data-tag></span></div>
+ <div class="sbody">
+  <h2 class="t">Seven design goals</h2>
+  <div class="tabs">
+   <p style="margin-bottom:8px"><span class="tryit">TRY IT</span>Click each goal, one by one. Visited goals turn green.</p>
+   <div class="tablist">
+    <button data-tab="g1" class="on">1 · Resource sharing</button><button data-tab="g2">2 · Openness</button><button data-tab="g3">3 · Transparency</button>
+    <button data-tab="g4">4 · Scalability</button><button data-tab="g5">5 · Concurrency</button><button data-tab="g6">6 · Heterogeneity</button><button data-tab="g7">7 · Fault tolerance</button>
+   </div>
+   <div style="margin-top:14px">
+    <div class="panel on" data-panel="g1"><div class="card c-blue"><h3>Resource sharing</h3><p>Let users use remote hardware, data and services as if they were on their own computer.</p><p style="margin-top:6px">📁 A Google Drive file shared by a group · 🖨️ a network printer</p></div></div>
+    <div class="panel" data-panel="g2"><div class="card c-green"><h3>Openness</h3><p>Built on <b>public, standard rules</b>, so anyone can add new parts.</p><p style="margin-top:6px">🌐 Any browser works with any website because both follow HTTP.</p></div></div>
+    <div class="panel" data-panel="g3"><div class="card c-purple"><h3>Transparency</h3><p><b>Hide</b> the fact that the system is spread over many computers.</p><p style="margin-top:6px">🔗 You open au.edu.pk without knowing which machine answers.</p></div></div>
+    <div class="panel" data-panel="g4"><div class="card c-amber"><h3>Scalability</h3><p>Keep working well when users, data or distance <b>grow</b>.</p><p style="margin-top:6px">📈 Result day: 10 times more students than normal.</p></div></div>
+    <div class="panel" data-panel="g5"><div class="card c-teal"><h3>Concurrency</h3><p>Many people use the same thing at once, and the result must stay <b>correct</b>.</p><p style="margin-top:6px">✈️ Two people try to book the last seat.</p></div></div>
+    <div class="panel" data-panel="g6"><div class="card c-blue"><h3>Heterogeneity</h3><p>Work across <b>different</b> devices, operating systems, networks and languages.</p><p style="margin-top:6px">📱 Android, iPhone and Windows PCs all use the same service.</p></div></div>
+    <div class="panel" data-panel="g7"><div class="card c-red"><h3>Fault tolerance</h3><p>Keep the service running even when <b>some parts fail</b>.</p><p style="margin-top:6px">🛟 One server crashes, a backup takes over.</p></div></div>
+   </div>
+  </div>
+  <div class="simple"><b>💡 In simple words:</b> These are the 7 things a good distributed system tries to achieve. Each one is also a <b>challenge</b>. Next, we look at the most important ones closely.</div>
+ </div>
+</section>
+
+<!-- 10 TRANSPARENCY -->
+<section class="slide" data-s="19" data-tag="Transparency">
+ <div class="shead">CS-426 · Week 10 · Session 19<span class="rule"></span><span data-tag></span></div>
+ <div class="sbody">
+  <h2 class="t">Transparency: what do we hide from the user?</h2>
+  <div class="tabs">
+   <p style="margin-bottom:8px"><span class="tryit">TRY IT</span>Click each type to see what it hides, with an example.</p>
+   <div class="tablist">
+    <button data-tab="t1" class="on">Access</button><button data-tab="t2">Location</button><button data-tab="t3">Migration</button><button data-tab="t4">Relocation</button>
+    <button data-tab="t5">Replication</button><button data-tab="t6">Concurrency</button><button data-tab="t7">Failure</button>
+   </div>
+   <div style="margin-top:14px" class="grid2">
+    <div>
+     <div class="panel on" data-panel="t1"><div class="card c-purple"><h3>Access transparency</h3><p><b>Hides:</b> how a resource is accessed.</p><p style="margin-top:6px"><b>Example:</b> You open a file on a network drive exactly like a file on your own disk.</p></div></div>
+     <div class="panel" data-panel="t2"><div class="card c-purple"><h3>Location transparency</h3><p><b>Hides:</b> where the resource is.</p><p style="margin-top:6px"><b>Example:</b> www.youtube.com does not tell you the city or the machine.</p></div></div>
+     <div class="panel" data-panel="t3"><div class="card c-purple"><h3>Migration transparency</h3><p><b>Hides:</b> that a resource has moved.</p><p style="margin-top:6px"><b>Example:</b> A website moves to a new data centre; its address stays the same.</p></div></div>
+     <div class="panel" data-panel="t4"><div class="card c-purple"><h3>Relocation transparency</h3><p><b>Hides:</b> that a resource moves <b>while you use it</b>.</p><p style="margin-top:6px"><b>Example:</b> Your phone call continues while your phone switches towers on the motorway.</p></div></div>
+     <div class="panel" data-panel="t5"><div class="card c-purple"><h3>Replication transparency</h3><p><b>Hides:</b> that many copies exist.</p><p style="margin-top:6px"><b>Example:</b> A video is stored on 50 servers, yet you see one video.</p></div></div>
+     <div class="panel" data-panel="t6"><div class="card c-purple"><h3>Concurrency transparency</h3><p><b>Hides:</b> that others use it at the same time.</p><p style="margin-top:6px"><b>Example:</b> 300 students use the LMS together; each feels alone.</p></div></div>
+     <div class="panel" data-panel="t7"><div class="card c-purple"><h3>Failure transparency</h3><p><b>Hides:</b> that something failed and recovered.</p><p style="margin-top:6px"><b>Example:</b> A server crashes; a backup finishes your payment.</p></div></div>
+    </div>
+    <div class="card">
+     <h3>Memory trick: <span class="hl">"ALM RRCF"</span></h3>
+     <p style="font-size:17px">Access · Location · Migration · Relocation · Replication · Concurrency · Failure</p>
+     <div class="callout amber" style="margin-top:10px;font-size:16px">Hiding <b>everything</b> is not always possible or useful. Network delay cannot be hidden, and sometimes users must know, e.g. "Printer is offline".</div>
+    </div>
+   </div>
+  </div>
+  <div class="simple"><b>💡 In simple words:</b> Transparency means the user <b>does not need to know</b> the messy details: where things are, how many copies exist, who else is using them, or what broke.</div>
+ </div>
+</section>
+
+<!-- 11 TRANSPARENCY QUIZ -->
+<section class="slide" data-s="19" data-tag="Quick check">
+ <div class="shead">CS-426 · Week 10 · Session 19<span class="rule"></span><span data-tag></span></div>
+ <div class="sbody">
+  <h2 class="t">Quick check: which transparency is it?</h2>
+  <div class="q" data-answer="1" data-explain="Location: you use a name, not a place."><div class="qt">1. You type drive.google.com and never learn which data centre answered.</div>
+   <div class="opts"><button>Access</button><button>Location</button><button>Failure</button></div><div class="fb"></div></div>
+  <div class="q" data-answer="2" data-explain="Failure: the crash and recovery were hidden from you."><div class="qt">2. A server crashes, but a backup takes over and your fee payment still completes.</div>
+   <div class="opts"><button>Replication</button><button>Migration</button><button>Failure</button></div><div class="fb"></div></div>
+  <div class="q" data-answer="0" data-explain="Replication: many copies, one view."><div class="qt">3. The same lecture video is stored on 50 servers, yet you see only one video.</div>
+   <div class="opts"><button>Replication</button><button>Concurrency</button><button>Location</button></div><div class="fb"></div></div>
+  <div class="q" data-answer="1" data-explain="Concurrency: sharing with others is hidden."><div class="qt">4. 200 students submit an assignment at the same minute; each feels alone on the system.</div>
+   <div class="opts"><button>Access</button><button>Concurrency</button><button>Relocation</button></div><div class="fb"></div></div>
+  <div class="simple"><b>💡 Tip:</b> Ask yourself, "What is being <b>hidden</b> here?" The answer is the name of the transparency.</div>
+ </div>
+</section>
+
+<!-- 12 OPENNESS -->
+<section class="slide" data-s="19" data-tag="Openness">
+ <div class="shead">CS-426 · Week 10 · Session 19<span class="rule"></span><span data-tag></span></div>
+ <div class="sbody">
+  <h2 class="t">Openness: everyone follows the same public rules</h2>
+  <div class="grid2" style="align-items:center">
+   <div style="display:grid;grid-template-columns:1fr auto 1fr;gap:10px;align-items:center">
+    <div style="display:grid;gap:8px"><div class="node">Chrome</div><div class="node">Firefox</div><div class="node">Edge</div></div>
+    <div class="node glow" style="padding:30px 14px">HTTP<small>open standard</small></div>
+    <div style="display:grid;gap:8px"><div class="node">Apache</div><div class="node">Nginx</div><div class="node">IIS</div></div>
+   </div>
+   <div>
+    <p>An <b>open</b> system publishes its rules (interfaces), so anyone can build parts that fit in.</p>
+    <p class="muted" style="margin-top:8px;font-size:17px">Examples of open standards: TCP/IP, HTTP, REST APIs, email (SMTP), MPI</p>
+   </div>
+  </div>
+  <div class="grid3">
+   <div class="card c-green"><h3>Interoperability</h3><p>Parts from different makers work together.</p></div>
+   <div class="card c-green"><h3>Portability</h3><p>An app can move to another system without changes.</p></div>
+   <div class="card c-green"><h3>Extensibility</h3><p>New parts can be added or replaced easily.</p></div>
+  </div>
+  <div class="simple"><b>💡 In simple words:</b> Any browser can open any website because they all "speak" the same language: HTTP. Shared public rules = an open system.</div>
+ </div>
+</section>
+
+<!-- 13 SCALABILITY -->
+<section class="slide" data-s="19" data-tag="Scalability">
+ <div class="shead">CS-426 · Week 10 · Session 19<span class="rule"></span><span data-tag></span></div>
+ <div class="sbody">
+  <h2 class="t">Scalability: can it grow without breaking?</h2>
+  <div class="grid2">
+   <div class="card">
+    <h3><span class="tryit">TRY IT</span>Result-day simulator</h3>
+    <p style="font-size:16px;margin-top:4px" class="muted">Step 1: drag the slider to add users. Step 2: press + to add servers until it turns green.</p>
+    <p style="font-size:17px;margin-top:6px">Users online: <b id="scU">1,000</b></p>
+    <input id="scRange" type="range" min="1000" max="100000" step="1000" value="1000" style="width:100%">
+    <p style="font-size:17px;margin-top:6px">Servers: <b id="scS">1</b>
+     <button class="btn ghost" id="scMinus" style="padding:3px 12px;margin-left:8px">−</button>
+     <button class="btn" id="scPlus" style="padding:3px 12px">+</button>
+     <span class="muted" style="font-size:14px">(each server handles 20,000 users)</span></p>
+    <p style="font-size:16px;margin-top:6px">Load per server: <b id="scLoad">5%</b></p>
+    <div class="meter"><div id="scBar"></div></div>
+    <p style="font-size:17px;margin-top:6px">Response time: <b id="scRT">53 ms</b> · <span id="scMsg" style="font-weight:700;color:var(--green)">Fast</span></p>
+   </div>
+   <div style="display:grid;gap:10px;align-content:start">
+    <div class="card c-amber"><h3>Three ways a system grows</h3>
+     <ul class="clean"><li><b>Size:</b> more users and data</li><li><b>Geographic:</b> users far apart</li><li><b>Administrative:</b> many organizations</li></ul></div>
+    <div class="card c-blue"><h3>How we scale</h3>
+     <ul class="clean"><li><b>Replicate:</b> add more copies of servers</li><li><b>Partition:</b> split the data and work</li><li><b>Cache:</b> keep data near users</li></ul></div>
+   </div>
+  </div>
+  <div class="simple"><b>💡 In simple words:</b> One server gets overloaded when too many people arrive. A scalable system <b>adds more servers</b> and stays fast.</div>
+ </div>
+</section>
+
+<!-- 14 HETEROGENEITY -->
+<section class="slide" data-s="19" data-tag="Heterogeneity">
+ <div class="shead">CS-426 · Week 10 · Session 19<span class="rule"></span><span data-tag></span></div>
+ <div class="sbody">
+  <h2 class="t">Heterogeneity and middleware</h2>
+  <div class="grid2" style="align-items:start">
+   <div style="display:grid;gap:8px">
+    <p style="font-size:16px"><span class="tryit">TRY IT</span>Click each layer, top to bottom.</p>
+    <div class="card reveal c-blue"><h3>Applications</h3><div class="tap">Click</div><div class="hide">Banking app, LMS, WhatsApp: written once, used everywhere.</div></div>
+    <div class="card reveal c-green" style="border-width:3px"><h3>Middleware ⭐</h3><div class="tap">Click</div><div class="hide">A software layer that <b>hides the differences</b> below it. Examples: RPC, message queues, Java RMI, <b>MPI</b>.</div></div>
+    <div class="card reveal c-purple"><h3>Operating systems</h3><div class="tap">Click</div><div class="hide">Windows, Linux, Android, iOS</div></div>
+    <div class="card reveal c-amber"><h3>Hardware and networks</h3><div class="tap">Click</div><div class="hide">Intel and ARM chips · Wi-Fi, 4G, fibre</div></div>
+   </div>
+   <div>
+    <p><b>Heterogeneity</b> means the parts are <b>different</b>:</p>
+    <ul class="clean" style="margin-top:6px"><li>Different networks</li><li>Different hardware</li><li>Different operating systems</li><li>Different programming languages</li></ul>
+    <div class="callout" style="margin-top:12px">Middleware sits <b>between</b> the apps and the OS, so programmers do not have to worry about the differences.</div>
+   </div>
+  </div>
+  <div class="simple"><b>💡 In simple words:</b> Middleware is like a <b>translator</b>. Different machines speak different "languages"; middleware lets them understand each other.</div>
+ </div>
+</section>
+
+<!-- 15 CONCURRENCY -->
+<section class="slide" data-s="19" data-tag="Concurrency">
+ <div class="shead">CS-426 · Week 10 · Session 19<span class="rule"></span><span data-tag></span></div>
+ <div class="sbody">
+  <h2 class="t">Concurrency: two users, one last seat</h2>
+  <div class="grid2">
+   <div style="display:grid;gap:10px;align-content:start">
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;align-items:center">
+     <div class="node" id="bkAli">👤 Ali</div>
+     <div class="node" id="bkSeat" style="border-color:var(--amber)">💺 Seats left<small id="bkCount" style="font-size:28px;color:var(--ink);font-weight:800">1</small></div>
+     <div class="node" id="bkSara">👤 Sara</div>
+    </div>
+    <p style="font-size:16px"><span class="tryit">TRY IT</span>① Run it <b>without</b> a lock. ② Tick the lock box and run again. Compare!</p>
+    <label style="font-size:18px;font-weight:700;display:flex;gap:10px;align-items:center"><input type="checkbox" id="bkLock" style="width:20px;height:20px"> Use a lock (one at a time)</label>
+    <div><button class="btn" id="bkRun">▶ Run booking</button> <button class="btn ghost" id="bkReset">Reset</button></div>
+   </div>
+   <div class="log" id="bkLog">Press "Run booking" to start.</div>
+  </div>
+  <div class="simple"><b>💡 In simple words:</b> If two people change the same thing at the same moment, the result can be wrong (two tickets for one seat). A <b>lock</b> makes them take turns, like in Week 02.</div>
+ </div>
+</section>
+
+<!-- 16 FAILURES -->
+<section class="slide" data-s="19" data-tag="Fault tolerance">
+ <div class="shead">CS-426 · Week 10 · Session 19<span class="rule"></span><span data-tag></span></div>
+ <div class="sbody">
+  <h2 class="t">Failures and fault tolerance</h2>
+  <div class="grid2">
+   <div class="card">
+    <h3><span class="tryit">TRY IT</span>Click a server to crash it</h3>
+    <p class="muted" style="font-size:15px">Crash one, then two, then all three. Click again to repair.</p>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-top:10px">
+     <button class="node rep" data-i="0">🖥️ Copy 1<small>UP</small></button>
+     <button class="node rep" data-i="1">🖥️ Copy 2<small>UP</small></button>
+     <button class="node rep" data-i="2">🖥️ Copy 3<small>UP</small></button>
+    </div>
+    <div class="arrow" style="margin:4px 0">⇅</div>
+    <div class="node" id="repSvc" style="border-color:var(--green);background:var(--green-soft);color:var(--green)">✅ Service available · 3/3 copies up</div>
+   </div>
+   <div style="display:grid;gap:10px;align-content:start">
+    <div class="card c-red"><h3>Partial failure</h3><p>Some parts fail, others still work. It is hard to tell <b>"crashed"</b> from <b>"just slow"</b>.</p></div>
+    <div class="card c-green"><h3>How we handle it</h3>
+     <ul class="clean"><li><b>Detect:</b> timeouts, heartbeat messages</li><li><b>Mask:</b> retry, keep extra copies</li><li><b>Tolerate:</b> keep serving with fewer parts</li><li><b>Recover:</b> logs, checkpoints, restart</li></ul></div>
+   </div>
+  </div>
+  <div class="simple"><b>💡 In simple words:</b> Keep <b>extra copies</b>. If one breaks, another one answers, and the user never notices.</div>
+ </div>
+</section>
+
+<!-- 17 FALLACIES -->
+<section class="slide" data-s="19" data-tag="Common traps">
+ <div class="shead">CS-426 · Week 10 · Session 19<span class="rule"></span><span data-tag></span></div>
+ <div class="sbody">
+  <h2 class="t">8 wrong assumptions about networks</h2>
+  <p><span class="tryit">TRY IT</span>Each card is a common belief. Click it to see the reality.</p>
+  <div class="grid4" data-whole>
+   <div class="card reveal"><h3>"The network is reliable"</h3><div class="tap">Reality?</div><div class="hide">Messages get lost; cables get cut.</div></div>
+   <div class="card reveal"><h3>"Delay is zero"</h3><div class="tap">Reality?</div><div class="hide">Karachi to London takes time.</div></div>
+   <div class="card reveal"><h3>"Bandwidth is unlimited"</h3><div class="tap">Reality?</div><div class="hide">Links fill up and slow down.</div></div>
+   <div class="card reveal"><h3>"The network is secure"</h3><div class="tap">Reality?</div><div class="hide">Attackers can read or change messages.</div></div>
+   <div class="card reveal"><h3>"The network never changes"</h3><div class="tap">Reality?</div><div class="hide">Computers join, leave and move.</div></div>
+   <div class="card reveal"><h3>"There is one admin"</h3><div class="tap">Reality?</div><div class="hide">Many organizations, many rules.</div></div>
+   <div class="card reveal"><h3>"Sending data is free"</h3><div class="tap">Reality?</div><div class="hide">It costs time and money.</div></div>
+   <div class="card reveal"><h3>"All devices are the same"</h3><div class="tap">Reality?</div><div class="hide">Mixed devices, systems and links.</div></div>
+  </div>
+  <div class="simple"><b>💡 In simple words:</b> Never assume the network is perfect. Good designs <b>expect</b> delay, loss and failure.</div>
+ </div>
+</section>
+
+<!-- 18 CHECKPOINT -->
+<section class="slide" data-s="19" data-tag="Checkpoint">
+ <div class="shead">CS-426 · Week 10 · Session 19<span class="rule"></span><span data-tag></span></div>
+ <div class="sbody">
+  <h2 class="t">Checkpoint: Part 1</h2>
+  <div class="q" data-answer="3" data-explain="Distributed computers have their own memory and cooperate by messages."><div class="qt">1. Which is NOT a property of distributed systems?</div>
+   <div class="opts"><button>Concurrency</button><button>No global clock</button><button>Independent failures</button><button>Shared main memory</button></div><div class="fb"></div></div>
+  <div class="q" data-answer="2" data-explain="Scalability: adding servers to serve more users."><div class="qt">2. A university adds 4 more servers so its portal can handle result day. Which goal is this?</div>
+   <div class="opts"><button>Openness</button><button>Heterogeneity</button><button>Scalability</button><button>Access transparency</button></div><div class="fb"></div></div>
+  <div class="q" data-answer="0" data-explain="Middleware hides differences between hardware, OS and networks."><div class="qt">3. Which layer hides the differences between Windows, Linux and Android machines?</div>
+   <div class="opts"><button>Middleware</button><button>Hardware</button><button>Cache</button><button>Clock</button></div><div class="fb"></div></div>
+  <div class="simple"><b>💡 Got all three?</b> Great, you understand the basics. If not, press <b>O</b> and revisit slides 8, 13 or 14.</div>
+ </div>
+</section>
+
+<!-- 19 DIVIDER -->
+<section class="slide divider" data-s="20" data-tag="Part 2" data-nostep>
+ <div class="shead">CS-426 · Week 10 · Session 20<span class="rule"></span><span data-tag></span></div>
+ <div class="sbody" style="justify-content:center">
+  <div class="kicker" style="color:#bfe3f7">Part 2 · Session 20</div>
+  <h1 style="margin-top:12px">Centralized and<br>Client-Server Architectures</h1>
+  <p style="color:#d6eefb;font-size:24px;margin-top:16px">We know <b>what</b> a distributed system is. Now: <b>how do we arrange its parts?</b></p>
+ </div>
+</section>
+
+<!-- 20 ARCHITECTURE -->
+<section class="slide" data-s="20" data-tag="Architecture">
+ <div class="shead">CS-426 · Week 10 · Session 20<span class="rule"></span><span data-tag></span></div>
+ <div class="sbody">
+  <h2 class="t">What is a system architecture?</h2>
+  <p>It is the <b>plan</b> of the system: what the parts are, how they talk, and where they run.</p>
+  <div class="grid3">
+   <div class="card c-blue"><h3>🧩 Components</h3><p>The parts: clients, servers, databases</p></div>
+   <div class="card c-purple"><h3>🔗 Connectors</h3><p>How the parts talk: request and reply, messages</p></div>
+   <div class="card c-teal"><h3>📍 Placement</h3><p>Which machine runs which part</p></div>
+  </div>
+  <div>
+   <h3 style="margin-bottom:8px">Our roadmap</h3>
+   <div style="display:grid;grid-template-columns:1fr auto 1fr auto 1fr;gap:10px;align-items:center">
+    <div class="node glow">Centralized<small>Today</small></div><div class="arrow">→</div>
+    <div class="node glow">Client-server · tiers<small>Today</small></div><div class="arrow">→</div>
+    <div class="node dim">Peer-to-peer · Hybrid<small>Week 12</small></div>
+   </div>
+  </div>
+  <div class="simple"><b>💡 In simple words:</b> Architecture is like the <b>floor plan of a house</b>: which rooms exist, how they connect, and where each one is.</div>
+ </div>
+</section>
+
+<!-- 21 CENTRALIZED -->
+<section class="slide" data-s="20" data-tag="Centralized">
+ <div class="shead">CS-426 · Week 10 · Session 20<span class="rule"></span><span data-tag></span></div>
+ <div class="sbody">
+  <h2 class="t">Architecture 1: Centralized</h2>
+  <div class="grid2">
+   <div class="card">
+    <p style="font-size:17px">All the work and all the data are on <b>one central computer</b>. Users connect through simple terminals.</p>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:10px">
+     <div class="node term">💻<small>Terminal</small></div><div class="node term">💻<small>Terminal</small></div><div class="node term">💻<small>Terminal</small></div><div class="node term">💻<small>Terminal</small></div>
+    </div>
+    <div class="arrow">↓ ↓ ↓ ↓</div>
+    <div class="node" id="ctrSrv" style="padding:12px">🖥️ Central server<small>Logic + Data</small></div>
+    <div style="margin-top:10px"><span class="tryit">TRY IT</span><button class="btn red" id="ctrBtn">💥 Crash the server</button></div>
+   </div>
+   <div style="display:grid;gap:10px;align-content:start">
+    <div class="card c-green"><h3>✔ Benefits</h3><ul class="clean"><li>Simple to build and manage</li><li>All data in one place</li><li>Easy security and backup</li></ul></div>
+    <div class="card c-red"><h3>✘ Limitations</h3><ul class="clean"><li><b>Single point of failure</b></li><li>The server becomes a <b>bottleneck</b></li><li>Hard to grow</li></ul></div>
+   </div>
+  </div>
+  <div class="simple"><b>💡 In simple words:</b> One big computer does everything. Easy to manage, but if it stops, <b>everyone</b> stops. Example: an old bank mainframe.</div>
+ </div>
+</section>
+
+<!-- 22 CLIENT-SERVER -->
+<section class="slide" data-s="20" data-tag="Client-server">
+ <div class="shead">CS-426 · Week 10 · Session 20<span class="rule"></span><span data-tag></span></div>
+ <div class="sbody">
+  <h2 class="t">Architecture 2: Client-server (request → reply)</h2>
+  <div class="card">
+   <p style="font-size:16px;margin-bottom:8px"><span class="tryit">TRY IT</span>Click a button and watch the request go out and the reply come back.</p>
+   <div style="display:grid;grid-template-columns:200px 1fr 200px;gap:10px;align-items:center">
+    <div class="node" id="csC">💻 Client<small>browser / app</small></div>
+    <div style="position:relative;height:60px">
+     <div style="position:absolute;top:29px;left:0;right:0;height:3px;background:var(--line)"></div>
+     <div id="csPkt" style="position:absolute;top:13px;left:0;padding:6px 12px;border-radius:999px;background:var(--blue);color:#fff;font-weight:700;font-size:15px;white-space:nowrap;opacity:0;transition:left 1s ease,opacity .2s">request</div>
+    </div>
+    <div class="node" id="csS">🖥️ Server<small>waits for requests</small></div>
+   </div>
+   <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap">
+    <button class="btn ghost csReq" data-q="GET /login" data-r="200 OK · Welcome, student">🔐 Log in</button>
+    <button class="btn ghost csReq" data-q="GET /result" data-r="200 OK · GPA 3.62">📊 View result</button>
+    <button class="btn ghost csReq" data-q="GET /week10.html" data-r="200 OK · slides sent">📥 Download slides</button>
+   </div>
+  </div>
+  <div class="grid3">
+   <div class="card c-blue"><h3>Client</h3><p>Starts the talk. Sends a <b>request</b>, then waits.</p></div>
+   <div class="card c-green"><h3>Server</h3><p>Always listening. Does the work and sends a <b>reply</b>.</p></div>
+   <div class="card c-amber"><h3>Roles, not machines</h3><p>One machine can be a client <b>and</b> a server.</p></div>
+  </div>
+  <div class="simple"><b>💡 In simple words:</b> Like a <b>restaurant</b>: you (client) order, the kitchen (server) cooks and serves. The kitchen waits for orders; it never orders from you.</div>
+ </div>
+</section>
+
+<!-- 23 LAYERS -->
+<section class="slide" data-s="20" data-tag="Three layers">
+ <div class="shead">CS-426 · Week 10 · Session 20<span class="rule"></span><span data-tag></span></div>
+ <div class="sbody">
+  <h2 class="t">Every application has three layers</h2>
+  <div class="grid2">
+   <div style="display:grid;gap:10px">
+    <div class="card reveal c-blue"><h3>① Presentation (what you see)</h3><div class="tap">Click for example</div><div class="hide">Result portal: the web page with the login form and the result table.</div></div>
+    <div class="card reveal c-purple"><h3>② Application logic (the thinking)</h3><div class="tap">Click for example</div><div class="hide">Check the login, calculate the GPA, apply university rules.</div></div>
+    <div class="card reveal c-teal"><h3>③ Data (the memory)</h3><div class="tap">Click for example</div><div class="hide">Database tables with students, courses and marks.</div></div>
+   </div>
+   <div style="display:grid;gap:12px;align-content:start">
+    <div class="callout blue"><b>Layers</b> = how the <b>software</b> is divided.<br><b>Tiers</b> = how many <b>machines</b> run those layers.</div>
+    <p>Next question: <b>which machine runs which layer?</b> The answer gives us 2-tier, 3-tier and multi-tier.</p>
+   </div>
+  </div>
+  <div class="simple"><b>💡 In simple words:</b> Every app has a <b>face</b> (screen), a <b>brain</b> (logic) and a <b>memory</b> (data). Architectures differ in <b>where</b> each one lives.</div>
+ </div>
+</section>
+
+<!-- 24 TWO-TIER -->
+<section class="slide" data-s="20" data-tag="Two-tier">
+ <div class="shead">CS-426 · Week 10 · Session 20<span class="rule"></span><span data-tag></span></div>
+ <div class="sbody">
+  <h2 class="t">Architecture 3: Two-tier (2 machines)</h2>
+  <div class="card">
+   <p style="font-size:17px"><span class="tryit">TRY IT</span>Move the slider: <b>how much work does the client do?</b></p>
+   <div style="display:flex;justify-content:space-between;font-size:14px;font-weight:700;color:var(--muted);margin-top:6px"><span>Client does little</span><span>Client does a lot</span></div>
+   <input id="ttRange" type="range" min="0" max="2" step="1" value="1" style="width:100%;margin:4px 0 8px">
+   <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+    <div><h3 style="color:var(--blue)">💻 Tier 1 · Client</h3><div id="ttClient" style="display:grid;gap:6px;margin-top:6px"></div></div>
+    <div><h3 style="color:var(--green)">🖥️ Tier 2 · Server</h3><div id="ttServer" style="display:grid;gap:6px;margin-top:6px"></div></div>
+   </div>
+  </div>
+  <div class="callout" id="ttMsg"></div>
+  <div class="simple"><b>💡 In simple words:</b> Two-tier = <b>client + server</b>. A <b>thin client</b> does little (like a browser). A <b>fat client</b> does a lot (like a desktop billing app).</div>
+ </div>
+</section>
+
+<!-- 25 THREE-TIER -->
+<section class="slide" data-s="20" data-tag="Three-tier">
+ <div class="shead">CS-426 · Week 10 · Session 20<span class="rule"></span><span data-tag></span></div>
+ <div class="sbody">
+  <h2 class="t">Architecture 4: Three-tier (3 machines)</h2>
+  <div style="display:grid;grid-template-columns:1fr auto 1fr auto 1fr;gap:10px;align-items:center">
+   <div class="node" id="th0">💻 Tier 1 · Client<small>Browser (screen)</small></div><div class="arrow">⇄</div>
+   <div class="node" id="th1">⚙️ Tier 2 · App server<small>Logic</small></div><div class="arrow">⇄</div>
+   <div class="node" id="th2">🗄️ Tier 3 · DB server<small>Data</small></div>
+  </div>
+  <div class="card c-blue" style="min-height:86px"><h3 id="thTitle">Ready</h3><p id="thText">Press "Next step" to follow a student asking for their result.</p></div>
+  <div><span class="tryit">TRY IT</span><button class="btn" id="thNext">Next step ▶</button> <button class="btn ghost" id="thReset">Reset</button> <span class="muted" id="thCount" style="margin-left:10px;font-weight:700"></span></div>
+  <div class="grid2">
+   <div class="card c-green"><h3>✔ Why three tiers?</h3><p>Each tier can be changed, secured and grown <b>separately</b>. Users never touch the database.</p></div>
+   <div class="card c-red"><h3>✘ Cost</h3><p>More machines, more network trips, more to manage.</p></div>
+  </div>
+  <div class="simple"><b>💡 In simple words:</b> Screen, brain and memory each get <b>their own machine</b>. The middle server is a server to you and a <b>client</b> to the database.</div>
+ </div>
+</section>
+
+<!-- 26 MULTI-TIER -->
+<section class="slide" data-s="20" data-tag="Multi-tier">
+ <div class="shead">CS-426 · Week 10 · Session 20<span class="rule"></span><span data-tag></span></div>
+ <div class="sbody">
+  <h2 class="t">Architecture 5: Multi-tier (n-tier) online shop</h2>
+  <p style="font-size:16px"><span class="tryit">TRY IT</span>Click each tier from left to right.</p>
+  <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:8px;align-items:stretch">
+   <button class="node mt" data-k="0">📱 Clients<small>app, browser</small></button>
+   <button class="node mt" data-k="1">⚖️ Load balancer</button>
+   <button class="node mt" data-k="2">🌐 Web servers<small>×4</small></button>
+   <button class="node mt" data-k="3">⚙️ App servers<small>×6</small></button>
+   <button class="node mt" data-k="4">⚡ Cache</button>
+   <button class="node mt" data-k="5">🗄️ Database<small>main + copies</small></button>
+  </div>
+  <div class="card c-purple" style="min-height:80px"><h3 id="mtTitle">Click any tier above</h3><p id="mtText">See what each part does on a big sale day.</p></div>
+  <div class="grid2">
+   <div class="card c-green"><h3>✔ Benefits</h3><p>Each tier grows on its own · no single server does everything · one failure stays small.</p></div>
+   <div class="card c-red"><h3>✘ Limitations</h3><p>Complex to build and fix · more delay · needs skilled people.</p></div>
+  </div>
+  <div class="simple"><b>💡 In simple words:</b> Big websites split the work into <b>many specialised teams</b> of servers, so each team can grow when needed.</div>
+ </div>
+</section>
+
+<!-- 27 COMPARISON -->
+<section class="slide" data-s="20" data-tag="Comparison">
+ <div class="shead">CS-426 · Week 10 · Session 20<span class="rule"></span><span data-tag></span></div>
+ <div class="sbody">
+  <h2 class="t">Putting it together: comparing architectures</h2>
+  <table class="tbl">
+   <tr><th>Architecture</th><th>Where is the work?</th><th>Growth</th><th>Survives failure?</th><th>Complexity</th><th>Example</th></tr>
+   <tr class="step"><td>Centralized</td><td>One central computer</td><td>Low</td><td>Low (one point of failure)</td><td>Low</td><td>Mainframe + terminals</td></tr>
+   <tr class="step"><td>Two-tier</td><td>Client + server</td><td>Low–Medium</td><td>Low–Medium</td><td>Low</td><td>Shop billing app + DB</td></tr>
+   <tr class="step"><td>Three-tier</td><td>Screen · logic · data apart</td><td>Medium–High</td><td>Medium</td><td>Medium</td><td>University LMS</td></tr>
+   <tr class="step"><td>Multi-tier</td><td>Many specialised tiers</td><td>High</td><td>High</td><td>High</td><td>Daraz, Amazon</td></tr>
+  </table>
+  <div class="simple"><b>💡 In simple words:</b> More tiers → handles more users and failures, but costs more and is harder to build. <b>Pick what the problem needs</b>, not the biggest one.</div>
+ </div>
+</section>
+
+<!-- 28 PICKER -->
+<section class="slide" data-s="20" data-tag="Apply it">
+ <div class="shead">CS-426 · Week 10 · Session 20<span class="rule"></span><span data-tag></span></div>
+ <div class="sbody">
+  <h2 class="t">Apply it: pick the best architecture</h2>
+  <div class="q" data-answer="1" data-explain="Two-tier: a desktop app talks directly to one shared database. Small and simple."><div class="qt">1. A small pharmacy: 2 PCs run a billing app that talks directly to one shared database.</div>
+   <div class="opts"><button>Centralized</button><button>Two-tier</button><button>Three-tier</button><button>Multi-tier</button></div><div class="fb"></div></div>
+  <div class="q" data-answer="2" data-explain="Three-tier: browser, application server, database server."><div class="qt">2. A university LMS used by 5,000 students through web browsers.</div>
+   <div class="opts"><button>Centralized</button><button>Two-tier</button><button>Three-tier</button><button>Multi-tier</button></div><div class="fb"></div></div>
+  <div class="q" data-answer="3" data-explain="Multi-tier: load balancers, caches and many copies for huge traffic."><div class="qt">3. A national shopping site with 10 million users on an 11.11 sale day.</div>
+   <div class="opts"><button>Centralized</button><button>Two-tier</button><button>Three-tier</button><button>Multi-tier</button></div><div class="fb"></div></div>
+  <div class="q" data-answer="0" data-explain="Centralized: one mainframe does everything; terminals only display."><div class="qt">4. An old railway booking system: one mainframe, many simple terminals at stations.</div>
+   <div class="opts"><button>Centralized</button><button>Two-tier</button><button>Three-tier</button><button>Multi-tier</button></div><div class="fb"></div></div>
+  <div class="simple"><b>💡 Tip:</b> Ask two questions: <b>How many users?</b> and <b>How many machines share the work?</b> This same thinking helps in Assignment 3.</div>
+ </div>
+</section>
+
+<!-- 29 MISCONCEPTIONS -->
+<section class="slide" data-s="20" data-tag="Myths">
+ <div class="shead">CS-426 · Week 10 · Session 20<span class="rule"></span><span data-tag></span></div>
+ <div class="sbody">
+  <h2 class="t">Myth or fact? Common mistakes</h2>
+  <p><span class="tryit">TRY IT</span>Each red card is a myth. Click it to see the truth.</p>
+  <div class="grid2" data-whole>
+   <div class="card reveal c-red"><h3>❌ "Distributed = parallel"</h3><div class="tap">See the truth</div><div class="hide">✅ Parallel aims at speed; distributed aims at sharing across separate machines. They can overlap.</div></div>
+   <div class="card reveal c-red"><h3>❌ "Client and server must be two machines"</h3><div class="tap">See the truth</div><div class="hide">✅ They are <b>roles</b>. Both can run on one laptop (localhost).</div></div>
+   <div class="card reveal c-red"><h3>❌ "A server is never a client"</h3><div class="tap">See the truth</div><div class="hide">✅ An app server is a <b>client</b> of the database server.</div></div>
+   <div class="card reveal c-red"><h3>❌ "More tiers is always better"</h3><div class="tap">See the truth</div><div class="hide">✅ Each tier adds cost and delay. A small shop needs only 2 tiers.</div></div>
+   <div class="card reveal c-red"><h3>❌ "Tiers and layers are the same"</h3><div class="tap">See the truth</div><div class="hide">✅ Layers = software parts. Tiers = machines.</div></div>
+   <div class="card reveal c-red"><h3>❌ "Hide everything from users"</h3><div class="tap">See the truth</div><div class="hide">✅ Full transparency is not always possible or useful.</div></div>
+  </div>
+  <div class="simple"><b>💡 Remember:</b> These are the most common mistakes in exam answers. Avoid them!</div>
+ </div>
+</section>
+
+<!-- 30 SUMMARY -->
+<section class="slide" data-s="20" data-tag="Summary">
+ <div class="shead">CS-426 · Week 10 · Session 20<span class="rule"></span><span data-tag></span></div>
+ <div class="sbody">
+  <h2 class="t">Week 10 in one page</h2>
+  <div class="grid2">
+   <div class="card c-blue"><h3>Part 1 · Distributed systems</h3><ul class="clean">
+    <li>Separate computers + messages = one system</li><li>Concurrency · no global clock · independent failures</li><li>7 goals: sharing, openness, transparency, scalability, concurrency, heterogeneity, fault tolerance</li></ul></div>
+   <div class="card c-green"><h3>Part 2 · Architectures</h3><ul class="clean">
+    <li>Centralized: simple, but one point of failure</li><li>Client-server: request → reply; roles, not machines</li><li>2-tier → 3-tier → multi-tier: more growth, more complexity</li></ul></div>
+  </div>
+  <div class="grid3">
+   <div class="card c-amber"><h3>📝 Assignment 3</h3><p>Released · due W12-S24<br><span class="muted" style="font-size:15px">Client-server, multi-tier, naming and P2P</span></p></div>
+   <div class="card c-purple"><h3>🧪 Quiz 3</h3><p>W11-S22<br><span class="muted" style="font-size:15px">GPU/CUDA, distributed basics, architecture, DNS</span></p></div>
+   <div class="card c-teal"><h3>⏭ Next week</h3><p>Naming and DNS<br><span class="muted" style="font-size:15px">How do we find a computer by its name?</span></p></div>
+  </div>
+  <div class="simple"><b>💡 One-line summary:</b> A distributed system is many computers acting as one, and its <b>architecture</b> decides where the screen, logic and data live.</div>
+ </div>
+</section>
+
+<!-- 31 EXIT TICKET -->
+<section class="slide" data-s="20" data-tag="Self-test">
+ <div class="shead">CS-426 · Week 10 · Session 20<span class="rule"></span><span data-tag></span></div>
+ <div class="sbody">
+  <h2 class="t">Test yourself</h2>
+  <p><span class="tryit">TRY IT</span>Write your answer first, then click to compare with a model answer.</p>
+  <div class="card reveal"><h3>1. Define a distributed system in one sentence.</h3><div class="tap">Model answer</div><div class="hide">Separate computers that cooperate only by messages and look like one system to users.</div></div>
+  <div class="card reveal"><h3>2. Give one example of failure transparency from daily life.</h3><div class="tap">Model answer</div><div class="hide">A WhatsApp message shows one tick, then is delivered later when the network returns. The retry was hidden from you.</div></div>
+  <div class="card reveal"><h3>3. Why is three-tier better than centralized for a university portal?</h3><div class="tap">Model answer</div><div class="hide">Screen, logic and data are separate, so each can grow and be secured on its own, and one server is no longer a single point of failure.</div></div>
+  <div class="simple"><b>💡 Well done!</b> You have finished Week 10. Questions? Ask now, or post them on the LMS. 🙂</div>
+ </div>
+</section>
+
+</div></div>
+
+<div class="overview" id="overview"><h2>All slides (click to jump · press O to close)</h2><div class="ovgrid" id="ovgrid"></div></div>
+<div class="help">→ next step · ← back · O all slides · F full screen</div>
+<div class="nav">
+ <button id="bPrev" title="Back (←)">‹</button>
+ <button id="bNext" title="Next step (→)">Next ›</button>
+ <button id="bOv" title="All slides (O)">▦</button>
+ <button id="bFs" title="Full screen (F)">⛶</button>
+</div>
+<div class="progress" id="progress"></div>
+
+<script>
+(function(){
+const deck=document.getElementById('deck');
+const slides=[...deck.querySelectorAll('.slide')];
+const N=slides.length;
+let cur=0, stepIdx=0;
+
+/* ----- footer, tags, steps ----- */
+const STEPS=[];
+slides.forEach((s,i)=>{
+  const tag=s.querySelector('[data-tag]'); if(tag) tag.textContent=s.dataset.tag||'';
+  const f=document.createElement('div'); f.className='sfoot';
+  f.innerHTML='<span>Dr. Zakir Khan · Assistant Professor · Air University A&amp;A Campus, Kamra</span>'+
+   '<span class="stepinfo"></span><span class="count">'+(i+1)+' / '+N+'</span>';
+  s.appendChild(f);
+  const list=[];
+  if(!s.hasAttribute('data-nostep')){
+    const body=s.querySelector('.sbody');
+    [...body.children].forEach(el=>{
+      if(el.matches('h2.t'))return;
+      if(el.matches('table')){const rows=[...el.querySelectorAll('tr.step')];if(rows.length){rows.forEach(r=>list.push(r));return;}}
+      if(el.matches('.grid2,.grid3,.grid4')&&!el.hasAttribute('data-whole')&&!el.querySelector('table')){
+        [...el.children].forEach(c=>{c.classList.add('step');list.push(c);});return;}
+      if(el.querySelector('tr.step')){el.querySelectorAll('tr.step').forEach(r=>list.push(r));return;}
+      el.classList.add('step');list.push(el);
+    });
+  }
+  STEPS.push(list);
+});
+
+/* ----- scaling ----- */
+function fit(){const sc=Math.min(window.innerWidth/1310,window.innerHeight/760);deck.style.transform='scale('+sc+')';}
+window.addEventListener('resize',fit); fit();
+
+/* ----- navigation ----- */
+function paintSteps(){
+  const list=STEPS[cur];
+  list.forEach((el,k)=>el.classList.toggle('shown',k<stepIdx));
+  const info=slides[cur].querySelector('.stepinfo');
+  if(!list.length){info.textContent='Press → to continue';info.className='stepinfo';}
+  else if(stepIdx<list.length){info.textContent='Step '+stepIdx+' of '+list.length+' · press → for more';info.className='stepinfo';}
+  else{info.textContent='✔ Slide complete · press → for next slide';info.className='stepinfo done';}
+  const total=STEPS.reduce((a,l)=>a+Math.max(1,l.length),0);
+  let done=0;for(let k=0;k<cur;k++)done+=Math.max(1,STEPS[k].length);done+=Math.max(1,stepIdx);
+  document.getElementById('progress').style.width=(done/total*100)+'%';
+}
+function show(i,allSteps){
+  cur=Math.max(0,Math.min(N-1,i));
+  stepIdx=allSteps?STEPS[cur].length:0;
+  if(!allSteps&&STEPS[cur].length)stepIdx=1;
+  slides.forEach((s,k)=>s.classList.toggle('active',k===cur));
+  document.querySelectorAll('.ovgrid button').forEach((b,k)=>b.classList.toggle('cur',k===cur));
+  paintSteps();
+}
+function next(){
+  if(stepIdx<STEPS[cur].length){stepIdx++;paintSteps();}
+  else if(cur<N-1)show(cur+1,false);
+}
+function prev(){
+  if(stepIdx>1){stepIdx--;paintSteps();}
+  else if(cur>0)show(cur-1,true);
+}
+const ov=document.getElementById('ovgrid');
+slides.forEach((s,i)=>{const h=s.querySelector('h2,h1');const b=document.createElement('button');
+  b.innerHTML='<span>'+(i+1)+' · Session '+s.dataset.s+' · '+(s.dataset.tag||'')+'</span>'+(h?h.textContent:'');
+  b.onclick=()=>{show(i,true);toggleOv(false);};ov.appendChild(b);});
+function toggleOv(v){document.getElementById('overview').classList.toggle('on',v);}
+function fs(){if(!document.fullscreenElement){document.documentElement.requestFullscreen&&document.documentElement.requestFullscreen();}else document.exitFullscreen();}
+document.addEventListener('keydown',e=>{
+  if(e.target.tagName==='INPUT')return;
+  const k=e.key;
+  if(['ArrowRight','PageDown',' ','Enter'].includes(k)){e.preventDefault();next();}
+  else if(['ArrowLeft','PageUp'].includes(k)){e.preventDefault();prev();}
+  else if(k==='Home')show(0,false); else if(k==='End')show(N-1,true);
+  else if(k==='o'||k==='O')toggleOv(!document.getElementById('overview').classList.contains('on'));
+  else if(k==='f'||k==='F')fs();
+  else if(k==='Escape')toggleOv(false);
+});
+document.getElementById('bPrev').onclick=prev;
+document.getElementById('bNext').onclick=next;
+document.getElementById('bOv').onclick=()=>toggleOv(true);
+document.getElementById('bFs').onclick=fs;
+let tx=null;
+document.addEventListener('touchstart',e=>{tx=e.touches[0].clientX;},{passive:true});
+document.addEventListener('touchend',e=>{if(tx===null)return;const dx=e.changedTouches[0].clientX-tx;if(Math.abs(dx)>60){dx<0?next():prev();}tx=null;});
+
+/* ----- generic: reveal, tabs, quiz ----- */
+document.querySelectorAll('.reveal').forEach(c=>c.addEventListener('click',()=>c.classList.toggle('open')));
+document.querySelectorAll('.tabs').forEach(t=>{
+  t.querySelectorAll('.tablist button').forEach(b=>b.addEventListener('click',()=>{
+    t.querySelectorAll('.tablist button').forEach(x=>{if(x.classList.contains('on'))x.classList.add('seen');x.classList.toggle('on',x===b);});
+    t.querySelectorAll('.panel').forEach(p=>p.classList.toggle('on',p.dataset.panel===b.dataset.tab));
+  }));
+});
+document.querySelectorAll('.q').forEach(q=>{
+  const ans=+q.dataset.answer, btns=[...q.querySelectorAll('.opts button')], fb=q.querySelector('.fb');
+  btns.forEach((b,i)=>b.addEventListener('click',()=>{
+    btns.forEach(x=>x.classList.remove('right','wrong'));
+    if(i===ans){b.classList.add('right');fb.style.color='var(--green)';fb.textContent='✔ Correct! '+q.dataset.explain;}
+    else{b.classList.add('wrong');fb.style.color='var(--red)';fb.textContent='✘ Not quite. Think again and try another option.';}
+  }));
+});
+
+/* ----- clocks ----- */
+function fmt(d){return d.toLocaleTimeString('en-GB',{hour12:false})+'.'+String(Math.floor(d.getMilliseconds()/100));}
+setInterval(()=>{const n=Date.now();
+  document.getElementById('clkA').textContent=fmt(new Date(n));
+  document.getElementById('clkB').textContent=fmt(new Date(n+800));
+  document.getElementById('clkC').textContent=fmt(new Date(n-1300));},100);
+
+/* ----- scalability ----- */
+let srv=1; const CAP=20000;
+function scal(){
+  const u=+document.getElementById('scRange').value, util=u/(srv*CAP), pct=Math.round(util*100);
+  document.getElementById('scU').textContent=u.toLocaleString();
+  document.getElementById('scS').textContent=srv;
+  document.getElementById('scLoad').textContent=pct+'%';
+  const bar=document.getElementById('scBar');bar.style.width=Math.min(100,pct)+'%';
+  let rt,msg,col;
+  if(util>=1){rt='no reply';msg='Overloaded: users see errors. Add servers!';col='var(--red)';}
+  else{rt=Math.round(50/(1-util))+' ms';
+    if(util<0.6){msg='Fast 👍';col='var(--green)';}else if(util<0.85){msg='Getting slow';col='var(--amber)';}else{msg='Very slow';col='var(--red)';}}
+  bar.style.background=col;
+  document.getElementById('scRT').textContent=rt;
+  const m=document.getElementById('scMsg');m.textContent=msg;m.style.color=col;
+}
+document.getElementById('scRange').addEventListener('input',scal);
+document.getElementById('scPlus').onclick=()=>{if(srv<10){srv++;scal();}};
+document.getElementById('scMinus').onclick=()=>{if(srv>1){srv--;scal();}};
+scal();
+
+/* ----- booking ----- */
+let bkTimers=[];
+function bkReset(){bkTimers.forEach(clearTimeout);bkTimers=[];
+  document.getElementById('bkCount').textContent='1';document.getElementById('bkLog').innerHTML='Press "Run booking" to start.';
+  ['bkAli','bkSara','bkSeat'].forEach(id=>document.getElementById(id).classList.remove('glow','down'));}
+document.getElementById('bkReset').onclick=bkReset;
+document.getElementById('bkRun').onclick=()=>{
+  bkReset();const lock=document.getElementById('bkLock').checked;const log=document.getElementById('bkLog');log.innerHTML='';
+  const steps=lock?[
+    ['bkAli','<span class="warn">Ali:</span> takes the lock 🔒',null],
+    ['bkAli','Ali: reads seats = 1',null],
+    ['bkSara','<span class="warn">Sara:</span> wants the lock… must WAIT ⏳',null],
+    ['bkAli','Ali: books the seat → seats = 0',0],
+    ['bkAli','Ali: gives back the lock 🔓',null],
+    ['bkSara','Sara: takes the lock, reads seats = 0',null],
+    ['bkSara','<span class="ok">Sara sees "Sold out". Correct result ✔</span>',null]
+  ]:[
+    ['bkAli','Ali: reads seats = 1',null],
+    ['bkSara','Sara: reads seats = 1  (at the same moment!)',null],
+    ['bkAli','Ali: books the seat → seats = 0',0],
+    ['bkSara','Sara: books the seat → seats = -1',-1],
+    ['bkSeat','<span class="bad">✘ DOUBLE BOOKING: 2 tickets for 1 seat!</span>',null],
+    ['bkSeat','<span class="warn">Now tick "Use a lock" and run again.</span>',null]
+  ];
+  steps.forEach((st,i)=>bkTimers.push(setTimeout(()=>{
+    ['bkAli','bkSara','bkSeat'].forEach(id=>document.getElementById(id).classList.remove('glow'));
+    document.getElementById(st[0]).classList.add('glow');
+    if(st[2]!==null)document.getElementById('bkCount').textContent=st[2];
+    if(st[2]===-1)document.getElementById('bkSeat').classList.add('down');
+    log.innerHTML+=st[1]+'<br>';
+  },i*1000)));
+};
+
+/* ----- replicas ----- */
+const up=[true,true,true];
+document.querySelectorAll('.rep').forEach(r=>r.addEventListener('click',()=>{const i=+r.dataset.i;up[i]=!up[i];
+  r.classList.toggle('down',!up[i]);r.querySelector('small').textContent=up[i]?'UP':'CRASHED';
+  const n=up.filter(Boolean).length;const s=document.getElementById('repSvc');
+  if(n>0){s.textContent='✅ Service available · '+n+'/3 copies up'+(n<3?' (user does not notice!)':'');s.style.cssText='border-color:var(--green);background:var(--green-soft);color:var(--green)';}
+  else{s.textContent='❌ Service DOWN · 0/3 copies up';s.style.cssText='border-color:var(--red);background:var(--red-soft);color:var(--red)';}
+}));
+
+/* ----- centralized ----- */
+let ctrUp=true;
+document.getElementById('ctrBtn').onclick=()=>{ctrUp=!ctrUp;
+  const s=document.getElementById('ctrSrv');s.classList.toggle('down',!ctrUp);
+  document.querySelectorAll('.term').forEach(t=>{t.classList.toggle('down',!ctrUp);t.querySelector('small').textContent=ctrUp?'Terminal':'No service';});
+  s.querySelector('small').textContent=ctrUp?'Logic + Data':'CRASHED: everyone is stuck';
+  document.getElementById('ctrBtn').textContent=ctrUp?'💥 Crash the server':'🔧 Repair the server';};
+
+/* ----- client-server ----- */
+let csBusy=false;
+document.querySelectorAll('.csReq').forEach(b=>b.addEventListener('click',()=>{
+  if(csBusy)return;csBusy=true;const p=document.getElementById('csPkt');const C=document.getElementById('csC'),S=document.getElementById('csS');
+  p.style.transition='none';p.style.left='0';p.style.background='var(--blue)';p.textContent='→ '+b.dataset.q;p.style.opacity='1';C.classList.add('glow');
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{p.style.transition='left 1s ease,opacity .2s';p.style.left='calc(100% - '+p.offsetWidth+'px)';}));
+  setTimeout(()=>{C.classList.remove('glow');S.classList.add('glow');p.style.background='var(--green)';p.textContent='← '+b.dataset.r;
+    p.style.transition='none';p.style.left='calc(100% - '+p.offsetWidth+'px)';
+    requestAnimationFrame(()=>requestAnimationFrame(()=>{p.style.transition='left 1s ease,opacity .2s';p.style.left='0';}));},1300);
+  setTimeout(()=>{S.classList.remove('glow');C.classList.add('glow');},2400);
+  setTimeout(()=>{C.classList.remove('glow');csBusy=false;},3400);
+}));
+
+/* ----- two-tier ----- */
+const L=[['Presentation (screen)','c-blue'],['Application logic','c-purple'],['Data','c-teal']];
+const TT=[
+ {c:0,msg:'<b>Terminal only:</b> the client just shows the screen. The server does all the thinking and keeps the data.'},
+ {c:1,msg:'<b>Thin client:</b> the client shows the screen; the server does the logic and keeps the data. Example: a web browser.'},
+ {c:2,msg:'<b>Fat (thick) client:</b> the client shows the screen <b>and</b> does the logic; the server only keeps the data. Example: a desktop billing app. Fast, but every PC must be updated.'}
+];
+function tt(){const v=+document.getElementById('ttRange').value;const cfg=TT[v];
+  const box=(t,c)=>'<div class="card '+c+'" style="padding:8px 14px"><h3 style="margin:0;font-size:18px">'+t+'</h3></div>';
+  let cl=v===0?'<div class="card" style="padding:8px 14px"><h3 style="margin:0;font-size:18px">Display only</h3></div>':'',sv='';
+  L.forEach((l,i)=>{if(i<cfg.c)cl+=box(l[0],l[1]);else sv+=box(l[0],l[1]);});
+  document.getElementById('ttClient').innerHTML=cl;document.getElementById('ttServer').innerHTML=sv;document.getElementById('ttMsg').innerHTML=cfg.msg;}
+document.getElementById('ttRange').addEventListener('input',tt);tt();
+
+/* ----- three-tier ----- */
+const TH=[
+ [0,'Step 1 · Ask','The student clicks "My Result". The browser sends a request to the application server.'],
+ [1,'Step 2 · Check','The application server checks the login and decides what data it needs.'],
+ [1,'Step 3 · The server becomes a client','The application server asks the database server for the marks. Now it is a CLIENT.'],
+ [2,'Step 4 · Find data','The database server finds the marks and sends them back.'],
+ [1,'Step 5 · Think','The application server calculates the GPA and builds the result page.'],
+ [0,'Step 6 · Show','The browser shows the result. The student never talked to the database directly. ✔']
+];
+let th=-1;
+function thShow(){[0,1,2].forEach(i=>document.getElementById('th'+i).classList.remove('glow'));
+  if(th<0){document.getElementById('thTitle').textContent='Ready';document.getElementById('thText').textContent='Press "Next step" to follow a student asking for their result.';document.getElementById('thCount').textContent='';return;}
+  const s=TH[th];document.getElementById('th'+s[0]).classList.add('glow');
+  document.getElementById('thTitle').textContent=s[1];document.getElementById('thText').textContent=s[2];document.getElementById('thCount').textContent=(th+1)+' of '+TH.length;}
+document.getElementById('thNext').onclick=()=>{th=(th+1)%TH.length;thShow();};
+document.getElementById('thReset').onclick=()=>{th=-1;thShow();};
+
+/* ----- multi-tier ----- */
+const MT=[
+ ['📱 Clients','Millions of phones and browsers send requests at the same time.'],
+ ['⚖️ Load balancer','Shares incoming requests among many web servers, so no single one is overloaded.'],
+ ['🌐 Web servers','Receive the requests and send back pages, images and scripts.'],
+ ['⚙️ Application servers','Do the business work: cart, prices, payment, discounts.'],
+ ['⚡ Cache','Keeps popular data (top products) in fast memory, so the database is not asked again and again.'],
+ ['🗄️ Database','The main database stores orders; its copies answer read requests and act as backups.']
+];
+document.querySelectorAll('.mt').forEach(b=>b.addEventListener('click',()=>{
+  document.querySelectorAll('.mt').forEach(x=>x.classList.toggle('glow',x===b));
+  const m=MT[+b.dataset.k];document.getElementById('mtTitle').textContent=m[0];document.getElementById('mtText').textContent=m[1];}));
+
+show(0,false);
+})();
+</script>
+</body>
+</html>
